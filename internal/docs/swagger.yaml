@@ -1,0 +1,294 @@
+definitions:
+  model.Performance:
+    properties:
+      bpm:
+        type: integer
+      cover:
+        $ref: '#/definitions/model.Resource'
+      createdAt:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  model.Resource:
+    properties:
+      createdAt:
+        type: string
+      filename:
+        type: string
+      id:
+        type: string
+      role:
+        $ref: '#/definitions/model.UserRole'
+      type:
+        $ref: '#/definitions/model.ResourceType'
+      updatedAt:
+        type: string
+    type: object
+  model.ResourceType:
+    enum:
+    - image
+    - video
+    - audio
+    - document
+    type: string
+    x-enum-varnames:
+    - ResourceTypeImage
+    - ResourceTypeVideo
+    - ResourceTypeAudio
+    - ResourceTypeDocument
+  model.UserRole:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+info:
+  contact: {}
+  title: BandMate7 API
+paths:
+  /performances:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Performance'
+            type: array
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+      summary: Get all performances
+      tags:
+      - performances
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: Name
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Bpm
+        in: formData
+        name: bpm
+        type: integer
+      - description: Album/Performance cover
+        in: formData
+        name: cover
+        type: file
+      - description: Upload file
+        in: formData
+        name: file
+        type: file
+      - description: Set user role
+        in: formData
+        name: userRoleId
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Performance'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+      summary: Create a new performance
+      tags:
+      - performances
+  /performances/{id}:
+    delete:
+      parameters:
+      - description: Performance ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+      summary: Delete a performances
+      tags:
+      - performances
+    get:
+      parameters:
+      - description: Performance ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Performance'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+      summary: Get performance by id
+      tags:
+      - performances
+  /performances/{id}/cover:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Performance ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Album/Performance cover
+        in: formData
+        name: cover
+        required: true
+        type: file
+      responses:
+        "201":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+      summary: Set a cover for a performance
+      tags:
+      - performances
+  /performances/{id}/resources:
+    get:
+      parameters:
+      - description: Performance ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Resource'
+            type: array
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+      summary: Get all resources from a performance
+      tags:
+      - performances
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: Performance ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Role
+        format: uuid
+        in: formData
+        name: role
+        type: string
+      - description: Bild
+        in: formData
+        name: resource
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Resource'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+      summary: Create a new resource
+      tags:
+      - performances
+  /resources/{id}:
+    get:
+      parameters:
+      - description: Resource ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+      summary: Get resource by id
+      tags:
+      - resources
+  /userRoles:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.UserRole'
+            type: array
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+      summary: Get all user roles
+      tags:
+      - userRoles
+swagger: "2.0"

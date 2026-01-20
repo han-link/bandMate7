@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres:16.3
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-band-organizer}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PW:-postgres}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-paw-me-back}" ]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+volumes:
+  db-data:
