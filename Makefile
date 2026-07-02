@@ -2,16 +2,13 @@ current_dir := $(shell pwd)
 
 .PHONY: gen-docs
 gen-docs:
-	docker run --rm -v "$(current_dir):/code" \
-		ghcr.io/swaggo/swag:v1.16.4 init \
+	swag init \
 		-g ./api/main.go \
 		-d cmd,internal \
 		-o internal/docs
-	docker run --rm -v "$(current_dir):/code" \
-		ghcr.io/swaggo/swag:v1.16.4 fmt \
+	swag fmt \
 		-d internal/docs
-	docker run --rm -v "$(current_dir):/code" \
-		ghcr.io/swaggo/swag:v1.16.4 fmt \
+	swag fmt \
 		-d .
 
 .PHONY: reset-all
