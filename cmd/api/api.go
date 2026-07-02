@@ -2,6 +2,7 @@ package main
 
 import (
 	"bandMate7/internal/docs"
+	"bandMate7/internal/service"
 	"bandMate7/internal/store"
 	"net/http"
 	"time"
@@ -13,14 +14,16 @@ import (
 )
 
 type application struct {
-	config config
-	logger *zap.SugaredLogger
-	store  store.Storage
+	config  config
+	logger  *zap.SugaredLogger
+	store   store.Storage
+	service service.Services
 }
 
 type config struct {
-	addr   string
-	domain string
+	addr        string
+	apiURL      string
+	resourceDir string
 }
 
 func (app *application) mount() http.Handler {
@@ -48,8 +51,8 @@ func (app *application) mount() http.Handler {
 				r.Get("/", app.getPerformanceHandler)
 				r.Post("/cover", app.setCoverHandler)
 				r.Route("/resources", func(r chi.Router) {
-					r.Post("/", app.createResourceHandler)
-					r.Get("/", app.getResourcesHandler)
+					r.Post("/", app.createPerformanceResourceHandler)
+					r.Get("/", app.getResourcesByPerformanceHandler)
 				})
 			})
 		})
@@ -67,7 +70,7 @@ func (app *application) mount() http.Handler {
 
 func (app *application) run(mux http.Handler) error {
 	docs.SwaggerInfo.Version = version
-	docs.SwaggerInfo.Host = app.config.domain + app.config.addr
+	docs.SwaggerInfo.Host = app.config.apiURL + app.config.addr
 	docs.SwaggerInfo.BasePath = "/api/v1"
 
 	srv := &http.Server{

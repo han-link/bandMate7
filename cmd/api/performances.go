@@ -2,6 +2,7 @@ package main
 
 import (
 	"bandMate7/internal/model"
+	"bandMate7/internal/service"
 	"bandMate7/internal/store"
 	"errors"
 	"net/http"
@@ -21,8 +22,8 @@ const performanceCtx performanceKey = "performance"
 //	@Produce	json
 //	@Param		id	path	string	true	"Performance ID"	Format(uuid)
 //	@Success	204	"No Content"
-//	@Failure	400	{object}	error
-//	@Failure	404	{object}	error
+//	@Failure	404	{object}	ErrorResponse
+//	@Failure	500	{object}	ErrorResponse
 //	@Router		/performances/{id} [delete]
 func (app *application) deletePerformancesHandler(w http.ResponseWriter, r *http.Request) {
 	performance := getPerformanceFromContext(r)
@@ -47,8 +48,7 @@ func (app *application) deletePerformancesHandler(w http.ResponseWriter, r *http
 //	@Tags		performances
 //	@Produce	json
 //	@Success	200	{object}	[]model.Performance
-//	@Failure	400	{object}	error
-//	@Failure	404	{object}	error
+//	@Failure	500	{object}	ErrorResponse
 //	@Router		/performances [get]
 func (app *application) getPerformancesHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -73,10 +73,10 @@ func (app *application) getPerformancesHandler(w http.ResponseWriter, r *http.Re
 //	@Produce	json
 //	@Param		id	path		string	true	"Performance ID"	Format(uuid)
 //	@Success	200	{object}	[]model.Resource
-//	@Failure	400	{object}	error
-//	@Failure	404	{object}	error
+//	@Failure	404	{object}	ErrorResponse
+//	@Failure	500	{object}	ErrorResponse
 //	@Router		/performances/{id}/resources [get]
-func (app *application) getResourcesHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) getResourcesByPerformanceHandler(w http.ResponseWriter, r *http.Request) {
 	performance := getPerformanceFromContext(r)
 
 	if err := app.jsonResponse(w, http.StatusOK, performance.Resources); err != nil {
@@ -92,8 +92,8 @@ func (app *application) getResourcesHandler(w http.ResponseWriter, r *http.Reque
 //	@Produce	json
 //	@Param		id	path		string	true	"Performance ID"	Format(uuid)
 //	@Success	200	{object}	model.Performance
-//	@Failure	400	{object}	error
-//	@Failure	404	{object}	error
+//	@Failure	404	{object}	ErrorResponse
+//	@Failure	500	{object}	ErrorResponse
 //	@Router		/performances/{id} [get]
 func (app *application) getPerformanceHandler(w http.ResponseWriter, r *http.Request) {
 	performance := getPerformanceFromContext(r)
@@ -105,9 +105,31 @@ func (app *application) getPerformanceHandler(w http.ResponseWriter, r *http.Req
 }
 
 type CreatePerformancePayload struct {
-	Name     string `json:"name" validate:"required,max=255"`
-	Bpm      string `json:"bpm" validate:"omitempty,numeric,min=1"`
-	UserRole string `json:"userRole" validate:"omitempty,uuid"`
+	Name       string `json:"name" validate:"required,max=255"`
+	Bpm        string `json:"bpm" validate:"omitempty,numeric,min=1"`
+	UserRoleId string `json:"userRole" validate:"omitempty,uuid"`
+}
+
+func (payload CreatePerformancePayload) ParseBpm() (*int, error) {
+	if payload.Bpm != "" {
+		bpm, err := strconv.Atoi(payload.Bpm)
+		if err != nil {
+			return nil, err
+		}
+		return &bpm, nil
+	}
+	return nil, nil
+}
+
+func (payload CreatePerformancePayload) ParseUserRoleId() (*uuid.UUID, error) {
+	if payload.UserRoleId != "" {
+		userRoleId, err := uuid.Parse(payload.UserRoleId)
+		if err != nil {
+			return nil, err
+		}
+		return &userRoleId, nil
+	}
+	return nil, nil
 }
 
 // Create performance
@@ -122,14 +144,14 @@ type CreatePerformancePayload struct {
 //	@Param		file		formData	file	false	"Upload file"
 //	@Param		userRoleId	formData	string	false	"Set user role"
 //	@Success	201			{object}	model.Performance
-//	@Failure	400			{object}	error
-//	@Failure	404			{object}	error
+//	@Failure	400			{object}	ErrorResponse
+//	@Failure	500			{object}	ErrorResponse
 //	@Router		/performances [post]
 func (app *application) createPerformanceHandler(w http.ResponseWriter, r *http.Request) {
 	var payload CreatePerformancePayload
 	payload.Name = r.FormValue("name")
 	payload.Bpm = r.FormValue("bpm")
-	payload.UserRole = r.FormValue("userRoleId")
+	payload.UserRoleId = r.FormValue("userRoleId")
 
 	if err := Validate.Struct(payload); err != nil {
 		app.badRequestResponse(w, r, err)
@@ -141,83 +163,50 @@ func (app *application) createPerformanceHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	performance := &model.Performance{
-		Name: payload.Name,
-	}
-
-	if payload.Bpm != "" {
-		bpm, err := strconv.Atoi(payload.Bpm)
-		if err != nil || bpm < 1 {
-			app.badRequestResponse(w, r, errors.New("bpm must be a number >= 1"))
-			return
-		}
-		performance.Bpm = &bpm
-	}
-
-	ctx := r.Context()
-
-	if err := app.store.Performances.Create(ctx, performance); err != nil {
+	bpm, err := payload.ParseBpm()
+	if err != nil {
 		app.internalServerError(w, r, err)
 		return
 	}
 
-	file, header, err := r.FormFile("cover")
+	userRoleId, err := payload.ParseUserRoleId()
+	if err != nil {
+		app.internalServerError(w, r, err)
+		return
+	}
+
+	cover, coverHeader, err := r.FormFile("cover")
 	if err != nil {
 		if !errors.Is(err, http.ErrMissingFile) {
-			/*if err = app.jsonResponse(w, http.StatusCreated, performance); err != nil {
-				app.internalServerError(w, r, err)
-				return
-			}
-			return*/
-			app.internalServerError(w, r, err)
-			return
-		}
-
-	}
-
-	if file != nil {
-		err, resource := app.store.Resources.Create(ctx, file, header, performance, nil)
-		if err != nil {
-			app.internalServerError(w, r, err)
-			return
-		}
-		if err = app.store.Performances.SetCover(ctx, performance, resource); err != nil {
 			app.internalServerError(w, r, err)
 			return
 		}
 	}
 
-	file, header, err = r.FormFile("file")
+	score, scoreHeader, err := r.FormFile("file")
+	if err != nil {
+		if !errors.Is(err, http.ErrMissingFile) {
+			app.internalServerError(w, r, err)
+			return
+		}
+	}
+
+	ctx := r.Context()
+
+	createdPerformance, err := app.service.Performances.CreatePerformance(ctx, service.CreatePerformanceRequest{
+		Name:        payload.Name,
+		Bpm:         bpm,
+		UserRoleId:  userRoleId,
+		Cover:       cover,
+		CoverHeader: coverHeader,
+		Score:       score,
+		ScoreHeader: scoreHeader,
+	})
 	if err != nil {
 		switch {
-		case errors.Is(err, http.ErrMissingFile):
-			if err = app.jsonResponse(w, http.StatusCreated, performance); err != nil {
-				app.internalServerError(w, r, err)
-				return
-			}
-			return
-		default:
-			app.internalServerError(w, r, err)
-			return
-		}
-
-	}
-
-	if payload.UserRole == "" {
-		app.badRequestResponse(w, r, errors.New("userRoleId is required when appending a file"))
-		return
-	}
-
-	userRoleId, err := uuid.Parse(payload.UserRole)
-	if err != nil {
-		app.badRequestResponse(w, r, err)
-		return
-	}
-
-	userRole, err := app.store.UserRoles.GetByID(ctx, userRoleId)
-	if err != nil {
-		switch {
-		case errors.Is(err, store.ErrNotFound):
+		case errors.Is(err, service.ErrUserRoleIdRequiredForScore):
+			app.badRequestResponse(w, r, err)
+		case errors.Is(err, store.ErrUserRoleNotFound):
 			app.notFoundResponse(w, r, err)
 		default:
 			app.internalServerError(w, r, err)
@@ -225,13 +214,7 @@ func (app *application) createPerformanceHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	err, _ = app.store.Resources.Create(ctx, file, header, performance, userRole)
-	if err != nil {
-		app.internalServerError(w, r, err)
-		return
-	}
-
-	if err = app.jsonResponse(w, http.StatusCreated, performance); err != nil {
+	if err = app.jsonResponse(w, http.StatusCreated, createdPerformance); err != nil {
 		app.internalServerError(w, r, err)
 		return
 	}
@@ -250,7 +233,7 @@ func (app *application) createPerformanceHandler(w http.ResponseWriter, r *http.
 //	@Failure	400			{object}	error
 //	@Failure	404			{object}	error
 //	@Router		/performances/{id}/resources [post]
-func (app *application) createResourceHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) createPerformanceResourceHandler(w http.ResponseWriter, r *http.Request) {
 	roleParam := r.FormValue("role")
 
 	roleId, err := uuid.Parse(roleParam)

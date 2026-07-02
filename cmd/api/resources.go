@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"path"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -15,8 +16,9 @@ import (
 //	@Summary	Get resource by id
 //	@Tags		resources
 //	@Param		id	path		string	true	"Resource ID"	Format(uuid)
-//	@Failure	400	{object}	error
-//	@Failure	404	{object}	error
+//	@Success	200	{file}		binary	"Resource file"
+//	@Failure	404	{object}	ErrorResponse
+//	@Failure	500	{object}	ErrorResponse
 //	@Router		/resources/{id} [get]
 func (app *application) getResourceHandler(w http.ResponseWriter, r *http.Request) {
 	idParam := chi.URLParam(r, "resourceId")
@@ -39,7 +41,8 @@ func (app *application) getResourceHandler(w http.ResponseWriter, r *http.Reques
 		}
 		return
 	}
+	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/octet-stream")
 	w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, resource.Filename))
-	http.ServeFile(w, r, "./resources/"+resource.Filename)
+	http.ServeFile(w, r, path.Join(app.config.resourceDir, resource.Filename))
 }

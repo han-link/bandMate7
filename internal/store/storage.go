@@ -11,7 +11,8 @@ import (
 )
 
 var (
-	ErrNotFound = errors.New("resource not found")
+	ErrNotFound         = errors.New("resource not found")
+	ErrUserRoleNotFound = errors.New("user role not found")
 	/*ErrConflict          = errors.New("resource already exists")
 	QueryTimeoutDuration = time.Second * 5*/
 )
@@ -42,10 +43,10 @@ type Storage struct {
 	UserRoles    UserRoles
 }
 
-func NewStorage(db *gorm.DB) Storage {
+func NewStorage(db *gorm.DB, resourceDir string) Storage {
 	return Storage{
 		Performances: &PerformanceStore{db},
-		Resources:    &ResourceStore{db},
+		Resources:    &ResourceStore{db, resourceDir},
 		UserRoles:    &UserRoleStore{db},
 	}
 }

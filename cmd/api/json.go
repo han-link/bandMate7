@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bandMate7/internal/types"
 	"encoding/json"
 	"net/http"
 
@@ -31,9 +30,9 @@ func readJSON(w http.ResponseWriter, r *http.Request, data any) error {
 }
 
 func writeJSONError(w http.ResponseWriter, status int, message string) error {
-	return writeJSON(w, status, &types.Response[any]{Data: nil, Success: false, Error: message})
+	return writeJSON(w, status, ErrorResponse{Error: message})
 }
 
 func (app *application) jsonResponse(w http.ResponseWriter, status int, data any) error {
-	return writeJSON(w, status, &types.Response[any]{Data: data, Success: true, Error: ""})
+	return writeJSON(w, status, data)
 }

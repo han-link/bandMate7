@@ -7,6 +7,7 @@ import (
 	"io"
 	"mime/multipart"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 
@@ -15,7 +16,8 @@ import (
 )
 
 type ResourceStore struct {
-	db *gorm.DB
+	db          *gorm.DB
+	resourceDir string
 }
 
 func pathExists(path string) (bool, error) {
@@ -45,16 +47,16 @@ func (s *ResourceStore) Create(
 		PerformanceID: performance.ID,
 		UserRole:      role,
 	}
-	var path string
+	var file_path string
 	fileParts := strings.Split(resource.Filename, ".")
 	name := fileParts[0]
 	ext := fileParts[1]
 	filename := resource.Filename
 	version := 0
 	for {
-		path = "resources/" + filename
+		file_path = path.Join(s.resourceDir, filename)
 		version++
-		exists, err := pathExists(path)
+		exists, err := pathExists(file_path)
 		if err != nil {
 			return err, nil
 		}
@@ -80,7 +82,11 @@ func (s *ResourceStore) Create(
 		return err, nil
 	}
 
-	dst, err := os.Create(path)
+	if err := os.MkdirAll(s.resourceDir, 0o755); err != nil {
+		return err, nil
+	}
+
+	dst, err := os.Create(file_path)
 	if err != nil {
 		return err, nil
 	}
@@ -104,7 +110,7 @@ func (s *ResourceStore) Create(
 }
 
 func (s *ResourceStore) Delete(ctx context.Context, resource model.Resource) error {
-	err := os.Remove("resources/" + resource.Filename)
+	err := os.Remove(path.Join(s.resourceDir, resource.Filename))
 	if err != nil {
 		return err
 	}

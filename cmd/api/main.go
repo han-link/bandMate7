@@ -2,6 +2,8 @@ package main
 
 import (
 	"bandMate7/internal/db"
+	"bandMate7/internal/env"
+	"bandMate7/internal/service"
 	"bandMate7/internal/store"
 	"encoding/json"
 	"log"
@@ -17,9 +19,15 @@ const version = "0.0.1"
 
 // @description
 func main() {
+	rootDir := env.GetString("Resource_DIR", "No path provided")
+	if rootDir == "No path provided" {
+		log.Fatal("No resource path provided. Set env variable Resource_DIR")
+	}
+
 	cfg := config{
-		addr:   ":8080",
-		domain: "localhost",
+		addr:        env.GetString("ADDR", ":8080"),
+		apiURL:      env.GetString("EXTERNAL_URL", "localhost"),
+		resourceDir: rootDir,
 	}
 
 	logDir := "./logs"
@@ -62,12 +70,15 @@ func main() {
 
 	logger.Info("Database connection established")
 
-	storage := store.NewStorage(database)
+	storage := store.NewStorage(database, cfg.resourceDir)
+
+	services := service.NewServices(&storage)
 
 	app := &application{
-		config: cfg,
-		logger: logger,
-		store:  storage,
+		config:  cfg,
+		logger:  logger,
+		store:   storage,
+		service: services,
 	}
 
 	mux := app.mount()

@@ -19,7 +19,7 @@ func (s *UserRoleStore) GetByID(ctx context.Context, id uuid.UUID) (*model.UserR
 	if err != nil {
 		switch {
 		case errors.Is(err, gorm.ErrRecordNotFound):
-			return nil, ErrNotFound
+			return nil, ErrUserRoleNotFound
 		default:
 			return nil, err
 		}
