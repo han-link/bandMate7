@@ -7,15 +7,16 @@ import (
 )
 
 type Performances interface {
-	CreatePerformance(ctx context.Context, input CreatePerformanceRequest) (*model.Performance, error)
+	Create(ctx context.Context, input CreatePerformanceRequest) (*model.Performance, error)
+	GetAll(ctx context.Context) (*[]model.Performance, error)
 }
 
 type Services struct {
 	Performances Performances
 }
 
-func NewServices(store *store.Storage) Services {
+func NewServices(store *store.Storage, baseUrl string) Services {
 	return Services{
-		Performances: &PerformanceService{store},
+		Performances: &PerformanceService{baseUrl, store},
 	}
 }

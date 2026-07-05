@@ -72,7 +72,7 @@ func main() {
 
 	storage := store.NewStorage(database, cfg.resourceDir)
 
-	services := service.NewServices(&storage)
+	services := service.NewServices(&storage, cfg.apiURL+cfg.addr)
 
 	app := &application{
 		config:  cfg,

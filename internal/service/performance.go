@@ -13,7 +13,8 @@ import (
 var ErrUserRoleIdRequiredForScore = errors.New("userRoleId is required when appending a file")
 
 type PerformanceService struct {
-	store *store.Storage
+	baseUrl string
+	store   *store.Storage
 }
 
 type CreatePerformanceRequest struct {
@@ -26,7 +27,7 @@ type CreatePerformanceRequest struct {
 	ScoreHeader *multipart.FileHeader
 }
 
-func (s *PerformanceService) CreatePerformance(ctx context.Context, input CreatePerformanceRequest) (*model.Performance, error) {
+func (s *PerformanceService) Create(ctx context.Context, input CreatePerformanceRequest) (*model.Performance, error) {
 	if input.Score != nil && input.UserRoleId == nil {
 		return nil, ErrUserRoleIdRequiredForScore
 	}
@@ -63,4 +64,24 @@ func (s *PerformanceService) CreatePerformance(ctx context.Context, input Create
 		}
 	}
 	return performance, nil
+}
+
+func (s *PerformanceService) performanceAddCoverUrl(p *model.Performance) {
+	if p == nil {
+		return
+	}
+	if p.Cover == nil {
+		return
+	}
+	p.Cover.SetUrl(s.baseUrl)
+}
+
+func (s *PerformanceService) GetAll(ctx context.Context) (*[]model.Performance, error) {
+	performances, err := s.store.Performances.GetAll(ctx)
+
+	for i := range performances {
+		s.performanceAddCoverUrl(&performances[i])
+	}
+
+	return &performances, err
 }

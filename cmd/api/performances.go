@@ -53,7 +53,7 @@ func (app *application) deletePerformancesHandler(w http.ResponseWriter, r *http
 func (app *application) getPerformancesHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	performances, err := app.store.Performances.GetAll(ctx)
+	performances, err := app.service.Performances.GetAll(ctx)
 
 	if err != nil {
 		app.internalServerError(w, r, err)
@@ -193,7 +193,7 @@ func (app *application) createPerformanceHandler(w http.ResponseWriter, r *http.
 
 	ctx := r.Context()
 
-	createdPerformance, err := app.service.Performances.CreatePerformance(ctx, service.CreatePerformanceRequest{
+	createdPerformance, err := app.service.Performances.Create(ctx, service.CreatePerformanceRequest{
 		Name:        payload.Name,
 		Bpm:         bpm,
 		UserRoleId:  userRoleId,
