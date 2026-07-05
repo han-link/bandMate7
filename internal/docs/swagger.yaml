@@ -1,15 +1,10 @@
 definitions:
-  main.ErrorResponse:
-    properties:
-      error:
-        type: string
-    type: object
-  model.Performance:
+  Performance:
     properties:
       bpm:
         type: integer
       cover:
-        $ref: '#/definitions/model.Resource'
+        $ref: '#/definitions/Resource'
       createdAt:
         type: string
       id:
@@ -19,7 +14,7 @@ definitions:
       updatedAt:
         type: string
     type: object
-  model.Resource:
+  Resource:
     properties:
       createdAt:
         type: string
@@ -28,10 +23,28 @@ definitions:
       id:
         type: string
       role:
-        $ref: '#/definitions/model.UserRole'
+        $ref: '#/definitions/UserRole'
       type:
         $ref: '#/definitions/model.ResourceType'
       updatedAt:
+        type: string
+      url:
+        type: string
+    type: object
+  UserRole:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  main.ErrorResponse:
+    properties:
+      error:
         type: string
     type: object
   model.ResourceType:
@@ -46,17 +59,6 @@ definitions:
     - ResourceTypeVideo
     - ResourceTypeAudio
     - ResourceTypeDocument
-  model.UserRole:
-    properties:
-      createdAt:
-        type: string
-      id:
-        type: string
-      name:
-        type: string
-      updatedAt:
-        type: string
-    type: object
 info:
   contact: {}
   title: BandMate7 API
@@ -70,7 +72,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/model.Performance'
+              $ref: '#/definitions/Performance'
             type: array
         "500":
           description: Internal Server Error
@@ -85,6 +87,8 @@ paths:
       parameters:
       - description: Name
         in: formData
+        maxLength: 255
+        minLength: 1
         name: name
         required: true
         type: string
@@ -101,6 +105,7 @@ paths:
         name: file
         type: file
       - description: Set user role
+        format: uuid
         in: formData
         name: userRoleId
         type: string
@@ -110,7 +115,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/model.Performance'
+            $ref: '#/definitions/Performance'
         "400":
           description: Bad Request
           schema:
@@ -161,7 +166,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Performance'
+            $ref: '#/definitions/Performance'
         "404":
           description: Not Found
           schema:
@@ -176,7 +181,7 @@ paths:
   /performances/{id}/cover:
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       parameters:
       - description: Performance ID
         format: uuid
@@ -217,7 +222,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/model.Resource'
+              $ref: '#/definitions/Resource'
             type: array
         "404":
           description: Not Found
@@ -255,7 +260,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/model.Resource'
+            $ref: '#/definitions/Resource'
         "400":
           description: Bad Request
           schema: {}
@@ -274,11 +279,13 @@ paths:
         name: id
         required: true
         type: string
+      produces:
+      - application/octet-stream
       responses:
         "200":
           description: Resource file
           schema:
-            type: file
+            type: string
         "404":
           description: Not Found
           schema:
@@ -297,7 +304,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/model.UserRole'
+              $ref: '#/definitions/UserRole'
             type: array
         "400":
           description: Bad Request

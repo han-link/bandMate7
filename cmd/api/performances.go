@@ -138,11 +138,11 @@ func (payload CreatePerformancePayload) ParseUserRoleId() (*uuid.UUID, error) {
 //	@Tags		performances
 //	@Accept		multipart/form-data
 //	@Produce	json
-//	@Param		name		formData	string	true	"Name"
+//	@Param		name		formData	string	true	"Name"	minlength(1)	maxlength(255)
 //	@Param		bpm			formData	int		false	"Bpm"
 //	@Param		cover		formData	file	false	"Album/Performance cover"
 //	@Param		file		formData	file	false	"Upload file"
-//	@Param		userRoleId	formData	string	false	"Set user role"
+//	@Param		userRoleId	formData	string	false	"Set user role"	Format(uuid)
 //	@Success	201			{object}	model.Performance
 //	@Failure	400			{object}	ErrorResponse
 //	@Failure	500			{object}	ErrorResponse
@@ -294,7 +294,7 @@ func (app *application) createPerformanceResourceHandler(w http.ResponseWriter, 
 //
 //	@Summary	Set a cover for a performance
 //	@Tags		performances
-//	@Accept		json
+//	@Accept		multipart/form-data
 //	@Param		id		path		string	true	"Performance ID"	Format(uuid)
 //	@Param		cover	formData	file	true	"Album/Performance cover"
 //	@Success	201		"No Content"

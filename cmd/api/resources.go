@@ -15,8 +15,9 @@ import (
 //
 //	@Summary	Get resource by id
 //	@Tags		resources
+//	@Produce	octet-stream
 //	@Param		id	path		string	true	"Resource ID"	Format(uuid)
-//	@Success	200	{file}		binary	"Resource file"
+//	@Success	200	{string}	binary	"Resource file"
 //	@Failure	404	{object}	ErrorResponse
 //	@Failure	500	{object}	ErrorResponse
 //	@Router		/resources/{id} [get]

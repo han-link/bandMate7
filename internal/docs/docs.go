@@ -30,7 +30,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.Performance"
+                                "$ref": "#/definitions/Performance"
                             }
                         }
                     },
@@ -55,6 +55,8 @@ const docTemplate = `{
                 "summary": "Create a new performance",
                 "parameters": [
                     {
+                        "maxLength": 255,
+                        "minLength": 1,
                         "type": "string",
                         "description": "Name",
                         "name": "name",
@@ -81,6 +83,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "uuid",
                         "description": "Set user role",
                         "name": "userRoleId",
                         "in": "formData"
@@ -90,7 +93,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.Performance"
+                            "$ref": "#/definitions/Performance"
                         }
                     },
                     "400": {
@@ -131,7 +134,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Performance"
+                            "$ref": "#/definitions/Performance"
                         }
                     },
                     "404": {
@@ -188,7 +191,7 @@ const docTemplate = `{
         "/performances/{id}/cover": {
             "post": {
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "tags": [
                     "performances"
@@ -251,7 +254,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.Resource"
+                                "$ref": "#/definitions/Resource"
                             }
                         }
                     },
@@ -307,7 +310,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.Resource"
+                            "$ref": "#/definitions/Resource"
                         }
                     },
                     "400": {
@@ -323,6 +326,9 @@ const docTemplate = `{
         },
         "/resources/{id}": {
             "get": {
+                "produces": [
+                    "application/octet-stream"
+                ],
                 "tags": [
                     "resources"
                 ],
@@ -341,7 +347,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Resource file",
                         "schema": {
-                            "type": "file"
+                            "type": "string"
                         }
                     },
                     "404": {
@@ -371,7 +377,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.UserRole"
+                                "$ref": "#/definitions/UserRole"
                             }
                         }
                     },
@@ -388,22 +394,14 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "main.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.Performance": {
+        "Performance": {
             "type": "object",
             "properties": {
                 "bpm": {
                     "type": "integer"
                 },
                 "cover": {
-                    "$ref": "#/definitions/model.Resource"
+                    "$ref": "#/definitions/Resource"
                 },
                 "createdAt": {
                     "type": "string"
@@ -419,7 +417,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Resource": {
+        "Resource": {
             "type": "object",
             "properties": {
                 "createdAt": {
@@ -432,12 +430,40 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "role": {
-                    "$ref": "#/definitions/model.UserRole"
+                    "$ref": "#/definitions/UserRole"
                 },
                 "type": {
                     "$ref": "#/definitions/model.ResourceType"
                 },
                 "updatedAt": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "UserRole": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "main.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
                     "type": "string"
                 }
             }
@@ -456,23 +482,6 @@ const docTemplate = `{
                 "ResourceTypeAudio",
                 "ResourceTypeDocument"
             ]
-        },
-        "model.UserRole": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
         }
     }
 }`

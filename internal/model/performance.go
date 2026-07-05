@@ -11,4 +11,4 @@ type Performance struct {
 	Cover   *Resource  `json:"cover" gorm:"foreignKey:CoverID;references:ID;-:migration"`
 
 	Resources []Resource `json:"-" gorm:"foreignKey:PerformanceID;constraint:OnDelete:CASCADE;"`
-}
+} //	@name	Performance
