@@ -44,12 +44,12 @@ func New(debug bool) (*gorm.DB, error) {
 	)
 
 	var userRoles = []model.UserRole{
-		{Name: "keyboard"},
-		{Name: "singer"},
-		{Name: "drums"},
-		{Name: "bass"},
-		{Name: "guitar1"},
-		{Name: "guitar2"},
+		{Name: "Keyboard"},
+		{Name: "Singer"},
+		{Name: "Drums"},
+		{Name: "Bass"},
+		{Name: "Guitar 1"},
+		{Name: "Guitar 2"},
 	}
 	db.Clauses(clause.OnConflict{DoNothing: true}).Create(&userRoles)
 
