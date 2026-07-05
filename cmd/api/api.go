@@ -4,6 +4,7 @@ import (
 	"bandMate7/internal/docs"
 	"bandMate7/internal/service"
 	"bandMate7/internal/store"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -81,7 +82,8 @@ func (app *application) run(mux http.Handler) error {
 		IdleTimeout:  time.Minute,
 	}
 
-	app.logger.Infow("Server has started at", "addr", app.config.addr)
+	app.logger.Infow(fmt.Sprintf("Server has started at %s%s", app.config.apiURL, app.config.addr))
+	app.logger.Infow(fmt.Sprintf("Docs are available at %s%s%s", app.config.apiURL, app.config.addr, "/api/v1/swagger/"))
 
 	return srv.ListenAndServe()
 }
