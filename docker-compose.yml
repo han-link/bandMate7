@@ -14,5 +14,33 @@ services:
       interval: 5s
       timeout: 3s
       retries: 12
+  object-storage:
+    command: '/garage server --single-node --default-bucket'
+    image: 'dxflrs/garage:v2.3.0'
+    environment:
+      GARAGE_DEFAULT_BUCKET: "band-organizer"
+      GARAGE_DEFAULT_SECRET_KEY: ${GARAGE_DEFAULT_SECRET_KEY}
+      GARAGE_DEFAULT_ACCESS_KEY: ${GARAGE_DEFAULT_ACCESS_KEY}
+      GARAGE_RPC_SECRET: ${GARAGE_RPC_SECRET}
+      GARAGE_ADMIN_TOKEN: ${GARAGE_ADMIN_TOKEN}
+      GARAGE_METRICS_TOKEN: ${GARAGE_METRICS_TOKEN}
+    volumes:
+        - object-storage-data:/var/lib/garage
+        - ./garage.toml:/etc/garage.toml
+    container_name: garage-container
+    ports:
+    - '3903:3903'
+    - '3902:3902'
+    - '3901:3901'
+    - '3900:3900'
+  garage-ui:
+    image: 'noooste/garage-ui:latest'
+    environment:
+      GARAGE_UI_GARAGE_ADMIN_TOKEN: ${GARAGE_ADMIN_TOKEN}
+    volumes:
+      - './garage-ui.config.yaml:/app/config.yaml'
+    ports:
+      - '8090:8080'
 volumes:
   db-data:
+  object-storage-data:

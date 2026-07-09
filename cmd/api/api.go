@@ -23,7 +23,7 @@ type application struct {
 
 type config struct {
 	addr        string
-	apiURL      string
+	host        string
 	resourceDir string
 }
 
@@ -71,7 +71,7 @@ func (app *application) mount() http.Handler {
 
 func (app *application) run(mux http.Handler) error {
 	docs.SwaggerInfo.Version = version
-	docs.SwaggerInfo.Host = app.config.apiURL + app.config.addr
+	docs.SwaggerInfo.Host = app.config.host + app.config.addr
 	docs.SwaggerInfo.BasePath = "/api/v1"
 
 	srv := &http.Server{
@@ -82,8 +82,8 @@ func (app *application) run(mux http.Handler) error {
 		IdleTimeout:  time.Minute,
 	}
 
-	app.logger.Infow(fmt.Sprintf("Server has started at %s%s", app.config.apiURL, app.config.addr))
-	app.logger.Infow(fmt.Sprintf("Docs are available at %s%s%s", app.config.apiURL, app.config.addr, "/api/v1/swagger/"))
+	app.logger.Infow(fmt.Sprintf("Server has started at %s%s", app.config.host, app.config.addr))
+	app.logger.Infow(fmt.Sprintf("Docs are available at %s%s%s", app.config.host, app.config.addr, "/api/v1/swagger/"))
 
 	return srv.ListenAndServe()
 }

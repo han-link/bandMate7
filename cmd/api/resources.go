@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"path"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -42,8 +41,24 @@ func (app *application) getResourceHandler(w http.ResponseWriter, r *http.Reques
 		}
 		return
 	}
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/octet-stream")
-	w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, resource.Filename))
-	http.ServeFile(w, r, path.Join(app.config.resourceDir, resource.Filename))
+
+	object, err := app.store.Resources.Open(ctx, resource)
+	if err != nil {
+		switch {
+		case errors.Is(err, store.ErrNotFound):
+			app.notFoundResponse(w, r, err)
+		default:
+			app.internalServerError(w, r, err)
+		}
+		return
+	}
+	defer object.Close()
+
+	contentType := object.ContentType
+	if contentType == "" {
+		contentType = "application/octet-stream"
+	}
+	w.Header().Set("Content-Type", contentType)
+	w.Header().Set("Content-Disposition", fmt.Sprintf("inline; filename=%q", resource.Filename))
+	http.ServeContent(w, r, resource.Filename, object.LastModified, object)
 }

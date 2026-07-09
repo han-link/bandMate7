@@ -4,33 +4,39 @@ import (
 	"bandMate7/internal/model"
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"mime/multipart"
+	"net/http"
 	"os"
 	"path"
-	"strconv"
 	"strings"
+	"time"
 
+	garage "git.deuxfleurs.fr/garage-sdk/garage-admin-sdk-golang"
 	"github.com/google/uuid"
+	"github.com/minio/minio-go/v7"
 	"gorm.io/gorm"
 )
 
 type ResourceStore struct {
-	db          *gorm.DB
-	resourceDir string
+	db           *gorm.DB
+	resourceDir  string
+	garageClient *garage.APIClient
+	garageCtx    context.Context
+	minioClient  *minio.Client
+	bucket       string
 }
 
-func pathExists(path string) (bool, error) {
-	if _, err := os.Stat(path); err == nil {
-		// path/to/whatever exists
-		return true, nil
-	} else if errors.Is(err, os.ErrNotExist) {
-		// path/to/whatever does *not* exist
-		return false, nil
-	} else {
-		// Schrodinger: file may or may not exist. See err for details.
-		return true, err
+func (s *ResourceStore) objectExists(ctx context.Context, key string) (bool, error) {
+	_, err := s.minioClient.StatObject(ctx, s.bucket, key, minio.StatObjectOptions{})
+	if err != nil {
+		if minio.ToErrorResponse(err).StatusCode == http.StatusNotFound {
+			return false, nil
+		}
+		return false, err
 	}
+	return true, nil
 }
 
 func (s *ResourceStore) Create(
@@ -47,27 +53,24 @@ func (s *ResourceStore) Create(
 		PerformanceID: performance.ID,
 		UserRole:      role,
 	}
-	var file_path string
-	fileParts := strings.Split(resource.Filename, ".")
-	name := fileParts[0]
-	ext := fileParts[1]
-	filename := resource.Filename
-	version := 0
-	for {
-		file_path = path.Join(s.resourceDir, filename)
-		version++
-		exists, err := pathExists(file_path)
+
+	name, ext, _ := strings.Cut(resource.Filename, ".")
+	if ext != "" {
+		ext = "." + ext
+	}
+	objectKey := resource.Filename
+	for version := 1; ; version++ {
+		exists, err := s.objectExists(ctx, objectKey)
 		if err != nil {
 			return err, nil
 		}
 		if !exists {
-			resource.Filename = filename
 			break
 		}
-		filename = name + "_" + strconv.Itoa(version) + "." + ext
+		objectKey = fmt.Sprintf("%s_%d%s", name, version, ext)
 	}
+	resource.Filename = objectKey
 
-	// TODO: Check if the file exists in the dir but not in he db
 	err := s.db.WithContext(ctx).
 		Create(resource).
 		Error
@@ -82,27 +85,18 @@ func (s *ResourceStore) Create(
 		return err, nil
 	}
 
-	if err := os.MkdirAll(s.resourceDir, 0o755); err != nil {
+	contentType := header.Header.Get("Content-Type")
+	if contentType == "" {
+		contentType = "application/octet-stream"
+	}
+
+	if _, err := s.minioClient.PutObject(ctx, s.bucket, objectKey, file, header.Size, minio.PutObjectOptions{
+		ContentType: contentType,
+	}); err != nil {
 		return err, nil
 	}
 
-	dst, err := os.Create(file_path)
-	if err != nil {
-		return err, nil
-	}
-
-	defer func(dst *os.File) {
-		err := dst.Close()
-		if err != nil {
-			// TODO: Handle Error
-		}
-	}(dst)
-
-	if _, err := io.Copy(dst, file); err != nil {
-		return err, nil
-	}
-
-	if err = file.Close(); err != nil {
+	if err := file.Close(); err != nil {
 		return err, nil
 	}
 
@@ -135,6 +129,36 @@ func (s *ResourceStore) GetByID(ctx context.Context, id uuid.UUID) (*model.Resou
 		}
 	}
 	return &resource, nil
+}
+
+type ResourceObject struct {
+	io.ReadSeekCloser
+	ContentType  string
+	Size         int64
+	LastModified time.Time
+}
+
+func (s *ResourceStore) Open(ctx context.Context, resource *model.Resource) (*ResourceObject, error) {
+	obj, err := s.minioClient.GetObject(ctx, s.bucket, resource.Filename, minio.GetObjectOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	stat, err := obj.Stat()
+	if err != nil {
+		obj.Close()
+		if minio.ToErrorResponse(err).StatusCode == http.StatusNotFound {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+
+	return &ResourceObject{
+		ReadSeekCloser: obj,
+		ContentType:    stat.ContentType,
+		Size:           stat.Size,
+		LastModified:   stat.LastModified,
+	}, nil
 }
 
 func (s *ResourceStore) GetAllByPerformance(ctx context.Context, performance *model.Performance) ([]model.Resource, error) {

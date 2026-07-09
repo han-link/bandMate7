@@ -5,10 +5,14 @@ import (
 	"bandMate7/internal/env"
 	"bandMate7/internal/service"
 	"bandMate7/internal/store"
+	"context"
 	"encoding/json"
 	"log"
 	"os"
 
+	garage "git.deuxfleurs.fr/garage-sdk/garage-admin-sdk-golang"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"go.uber.org/zap"
 )
 
@@ -26,7 +30,7 @@ func main() {
 
 	cfg := config{
 		addr:        env.GetString("ADDR", ":8080"),
-		apiURL:      env.GetString("EXTERNAL_URL", "localhost"),
+		host:        env.GetString("HOST", "localhost"),
 		resourceDir: rootDir,
 	}
 
@@ -70,9 +74,29 @@ func main() {
 
 	logger.Info("Database connection established")
 
-	storage := store.NewStorage(database, cfg.resourceDir)
+	garageCfg := garage.NewConfiguration()
 
-	services := service.NewServices(&storage, cfg.apiURL+cfg.addr)
+	client := garage.NewAPIClient(garageCfg)
+
+	ctx := context.WithValue(context.Background(), garage.ContextAccessToken, env.GetString("GARAGE_DEFAULT_ACCESS_KEY", ""))
+
+	garageEndpoint := env.GetString("GARAGE_S3_ENDPOINT", "localhost:3900")
+	garageAccessKey := env.GetString("GARAGE_DEFAULT_ACCESS_KEY", "")
+	garageSecretKey := env.GetString("GARAGE_DEFAULT_SECRET_KEY", "")
+	garageBucket := env.GetString("GARAGE_DEFAULT_BUCKET", "band-organizer")
+
+	minioClient, err := minio.New(garageEndpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(garageAccessKey, garageSecretKey, ""),
+		Secure: env.GetBool("GARAGE_S3_USE_SSL", false),
+		Region: env.GetString("GARAGE_REGION", "garage"),
+	})
+	if err != nil {
+		logger.Fatal(err)
+	}
+
+	storage := store.NewStorage(database, cfg.resourceDir, client, ctx, minioClient, garageBucket)
+
+	services := service.NewServices(&storage, "http://"+cfg.host+cfg.addr)
 
 	app := &application{
 		config:  cfg,

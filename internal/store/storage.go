@@ -6,7 +6,9 @@ import (
 	"errors"
 	"mime/multipart"
 
+	garage "git.deuxfleurs.fr/garage-sdk/garage-admin-sdk-golang"
 	"github.com/google/uuid"
+	"github.com/minio/minio-go/v7"
 	"gorm.io/gorm"
 )
 
@@ -29,6 +31,7 @@ type Resources interface {
 	Create(ctx context.Context, file multipart.File, header *multipart.FileHeader, performance *model.Performance, role *model.UserRole) (error, *model.Resource)
 	Delete(ctx context.Context, resource model.Resource) error
 	GetByID(ctx context.Context, id uuid.UUID) (*model.Resource, error)
+	Open(ctx context.Context, resource *model.Resource) (*ResourceObject, error)
 	GetAllByPerformance(ctx context.Context, performance *model.Performance) ([]model.Resource, error)
 }
 
@@ -43,10 +46,10 @@ type Storage struct {
 	UserRoles    UserRoles
 }
 
-func NewStorage(db *gorm.DB, resourceDir string) Storage {
+func NewStorage(db *gorm.DB, resourceDir string, garageClient *garage.APIClient, garageCtx context.Context, minioClient *minio.Client, bucket string) Storage {
 	return Storage{
 		Performances: &PerformanceStore{db},
-		Resources:    &ResourceStore{db, resourceDir},
+		Resources:    &ResourceStore{db, resourceDir, garageClient, garageCtx, minioClient, bucket},
 		UserRoles:    &UserRoleStore{db},
 	}
 }
