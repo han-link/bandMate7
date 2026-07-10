@@ -412,6 +412,12 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "resources": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Resource"
+                    }
+                },
                 "updatedAt": {
                     "type": "string"
                 }
@@ -429,17 +435,17 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "role": {
-                    "$ref": "#/definitions/UserRole"
-                },
                 "type": {
-                    "$ref": "#/definitions/model.ResourceType"
+                    "type": "string"
                 },
                 "updatedAt": {
                     "type": "string"
                 },
                 "url": {
                     "type": "string"
+                },
+                "user_role": {
+                    "$ref": "#/definitions/UserRole"
                 }
             }
         },
@@ -467,21 +473,6 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
-        },
-        "model.ResourceType": {
-            "type": "string",
-            "enum": [
-                "image",
-                "video",
-                "audio",
-                "document"
-            ],
-            "x-enum-varnames": [
-                "ResourceTypeImage",
-                "ResourceTypeVideo",
-                "ResourceTypeAudio",
-                "ResourceTypeDocument"
-            ]
         }
     }
 }`

@@ -11,6 +11,10 @@ definitions:
         type: string
       name:
         type: string
+      resources:
+        items:
+          $ref: '#/definitions/Resource'
+        type: array
       updatedAt:
         type: string
     type: object
@@ -22,14 +26,14 @@ definitions:
         type: string
       id:
         type: string
-      role:
-        $ref: '#/definitions/UserRole'
       type:
-        $ref: '#/definitions/model.ResourceType'
+        type: string
       updatedAt:
         type: string
       url:
         type: string
+      user_role:
+        $ref: '#/definitions/UserRole'
     type: object
   UserRole:
     properties:
@@ -47,18 +51,6 @@ definitions:
       error:
         type: string
     type: object
-  model.ResourceType:
-    enum:
-    - image
-    - video
-    - audio
-    - document
-    type: string
-    x-enum-varnames:
-    - ResourceTypeImage
-    - ResourceTypeVideo
-    - ResourceTypeAudio
-    - ResourceTypeDocument
 info:
   contact: {}
   title: BandMate7 API
