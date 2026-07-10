@@ -46,8 +46,19 @@ func (s *ResourceStore) Create(
 	performance *model.Performance,
 	role *model.UserRole,
 ) (error, *model.Resource) {
+	buf := make([]byte, 512)
+	n, err := file.Read(buf)
+	if err != nil && err != io.EOF {
+		return err, nil
+	}
+	contentType := http.DetectContentType(buf[:n])
+
+	if _, err := file.Seek(0, io.SeekStart); err != nil {
+		return err, nil
+	}
+
 	resource := &model.Resource{
-		Type:          model.ResourceTypeImage, // TODO: Replace with type detection
+		Type:          contentType,
 		Filename:      header.Filename,
 		SizeBytes:     header.Size,
 		PerformanceID: performance.ID,
@@ -71,7 +82,7 @@ func (s *ResourceStore) Create(
 	}
 	resource.Filename = objectKey
 
-	err := s.db.WithContext(ctx).
+	err = s.db.WithContext(ctx).
 		Create(resource).
 		Error
 	if err != nil {
@@ -83,11 +94,6 @@ func (s *ResourceStore) Create(
 		Error
 	if err != nil {
 		return err, nil
-	}
-
-	contentType := header.Header.Get("Content-Type")
-	if contentType == "" {
-		contentType = "application/octet-stream"
 	}
 
 	if _, err := s.minioClient.PutObject(ctx, s.bucket, objectKey, file, header.Size, minio.PutObjectOptions{

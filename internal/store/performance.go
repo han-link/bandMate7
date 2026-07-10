@@ -18,6 +18,8 @@ func (s *PerformanceStore) GetAll(ctx context.Context) ([]model.Performance, err
 	var performances []model.Performance
 	err := s.db.WithContext(ctx).
 		Preload("Cover").
+		Preload("Resources").
+		Preload("Resources.UserRole").
 		Find(&performances).
 		Error
 	if err != nil {
