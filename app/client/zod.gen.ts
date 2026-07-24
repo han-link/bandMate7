@@ -104,6 +104,15 @@ export const zGetResourcesByIdPath = z.object({
  */
 export const zGetResourcesByIdResponse = z.string();
 
+export const zGetResourcesByIdMetaPath = z.object({
+    id: z.uuid()
+});
+
+/**
+ * Resource Meta
+ */
+export const zGetResourcesByIdMetaResponse = zResource;
+
 /**
  * OK
  */

@@ -5,7 +5,7 @@ import type { AxiosError } from 'axios';
 
 import { client } from '../client.gen';
 import { type Options, PerformancesService, ResourcesService, UserRolesService } from '../sdk.gen';
-import type { DeletePerformancesByIdData, DeletePerformancesByIdError, GetPerformancesByIdData, GetPerformancesByIdError, GetPerformancesByIdResourcesData, GetPerformancesByIdResourcesError, GetPerformancesByIdResourcesResponse, GetPerformancesByIdResponse, GetPerformancesData, GetPerformancesError, GetPerformancesResponse, GetResourcesByIdData, GetResourcesByIdError, GetResourcesByIdResponse, GetUserRolesData, GetUserRolesResponse, PostPerformancesByIdCoverData, PostPerformancesByIdResourcesData, PostPerformancesByIdResourcesResponse, PostPerformancesData, PostPerformancesError, PostPerformancesResponse } from '../types.gen';
+import type { DeletePerformancesByIdData, DeletePerformancesByIdError, GetPerformancesByIdData, GetPerformancesByIdError, GetPerformancesByIdResourcesData, GetPerformancesByIdResourcesError, GetPerformancesByIdResourcesResponse, GetPerformancesByIdResponse, GetPerformancesData, GetPerformancesError, GetPerformancesResponse, GetResourcesByIdData, GetResourcesByIdError, GetResourcesByIdMetaData, GetResourcesByIdMetaError, GetResourcesByIdMetaResponse, GetResourcesByIdResponse, GetUserRolesData, GetUserRolesResponse, PostPerformancesByIdCoverData, PostPerformancesByIdResourcesData, PostPerformancesByIdResourcesResponse, PostPerformancesData, PostPerformancesError, PostPerformancesResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseURL' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -178,6 +178,24 @@ export const getResourcesByIdOptions = (options: Options<GetResourcesByIdData>) 
         return data;
     },
     queryKey: getResourcesByIdQueryKey(options)
+});
+
+export const getResourcesByIdMetaQueryKey = (options: Options<GetResourcesByIdMetaData>) => createQueryKey('getResourcesByIdMeta', options);
+
+/**
+ * Get resource by id
+ */
+export const getResourcesByIdMetaOptions = (options: Options<GetResourcesByIdMetaData>) => queryOptions<GetResourcesByIdMetaResponse, AxiosError<GetResourcesByIdMetaError>, GetResourcesByIdMetaResponse, ReturnType<typeof getResourcesByIdMetaQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await ResourcesService.getResourcesByIdMeta({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getResourcesByIdMetaQueryKey(options)
 });
 
 export const getUserRolesQueryKey = (options?: Options<GetUserRolesData>) => createQueryKey('getUserRoles', options);

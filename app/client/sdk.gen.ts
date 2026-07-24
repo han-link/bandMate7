@@ -2,7 +2,7 @@
 
 import { type Client, type ClientMeta, formDataBodySerializer, type Options as Options2, type RequestResult, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { DeletePerformancesByIdData, DeletePerformancesByIdErrors, DeletePerformancesByIdResponses, GetPerformancesByIdData, GetPerformancesByIdErrors, GetPerformancesByIdResourcesData, GetPerformancesByIdResourcesErrors, GetPerformancesByIdResourcesResponses, GetPerformancesByIdResponses, GetPerformancesData, GetPerformancesErrors, GetPerformancesResponses, GetResourcesByIdData, GetResourcesByIdErrors, GetResourcesByIdResponses, GetUserRolesData, GetUserRolesErrors, GetUserRolesResponses, PostPerformancesByIdCoverData, PostPerformancesByIdCoverErrors, PostPerformancesByIdCoverResponses, PostPerformancesByIdResourcesData, PostPerformancesByIdResourcesErrors, PostPerformancesByIdResourcesResponses, PostPerformancesData, PostPerformancesErrors, PostPerformancesResponses } from './types.gen';
+import type { DeletePerformancesByIdData, DeletePerformancesByIdErrors, DeletePerformancesByIdResponses, GetPerformancesByIdData, GetPerformancesByIdErrors, GetPerformancesByIdResourcesData, GetPerformancesByIdResourcesErrors, GetPerformancesByIdResourcesResponses, GetPerformancesByIdResponses, GetPerformancesData, GetPerformancesErrors, GetPerformancesResponses, GetResourcesByIdData, GetResourcesByIdErrors, GetResourcesByIdMetaData, GetResourcesByIdMetaErrors, GetResourcesByIdMetaResponses, GetResourcesByIdResponses, GetUserRolesData, GetUserRolesErrors, GetUserRolesResponses, PostPerformancesByIdCoverData, PostPerformancesByIdCoverErrors, PostPerformancesByIdCoverResponses, PostPerformancesByIdResourcesData, PostPerformancesByIdResourcesErrors, PostPerformancesByIdResourcesResponses, PostPerformancesData, PostPerformancesErrors, PostPerformancesResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -120,6 +120,17 @@ export class ResourcesService {
         return (options.client ?? client).get<GetResourcesByIdResponses, GetResourcesByIdErrors, ThrowOnError>({
             responseType: 'blob',
             url: '/resources/{id}',
+            ...options
+        });
+    }
+    
+    /**
+     * Get resource by id
+     */
+    public static getResourcesByIdMeta<ThrowOnError extends boolean = false>(options: Options<GetResourcesByIdMetaData, ThrowOnError>): RequestResult<GetResourcesByIdMetaResponses, GetResourcesByIdMetaErrors, ThrowOnError> {
+        return (options.client ?? client).get<GetResourcesByIdMetaResponses, GetResourcesByIdMetaErrors, ThrowOnError>({
+            responseType: 'json',
+            url: '/resources/{id}/meta',
             ...options
         });
     }
