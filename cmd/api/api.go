@@ -59,7 +59,9 @@ func (app *application) mount() http.Handler {
 		})
 		r.Route("/resources", func(r chi.Router) {
 			r.Route("/{resourceId}", func(r chi.Router) {
+				r.Use(app.resourceContextMiddleware)
 				r.Get("/", app.getResourceHandler)
+				r.Get("/meta", app.getResourceMetaHandler)
 			})
 		})
 		r.Route("/userRoles", func(r chi.Router) {

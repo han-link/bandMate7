@@ -36,3 +36,31 @@ func (app *application) performanceContextMiddleware(next http.Handler) http.Han
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
+
+func (app *application) resourceContextMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		idParam := chi.URLParam(r, "resourceId")
+		resourceId, err := uuid.Parse(idParam)
+
+		if err != nil {
+			app.internalServerError(w, r, err)
+			return
+		}
+
+		ctx := r.Context()
+
+		resource, err := app.store.Resources.GetByID(ctx, resourceId)
+		if err != nil {
+			switch {
+			case errors.Is(err, store.ErrNotFound):
+				app.notFoundResponse(w, r, err)
+			default:
+				app.internalServerError(w, r, err)
+			}
+			return
+		}
+		resource.SetUrl(app.config.baseUrl)
+		ctx = context.WithValue(ctx, resourceCtx, resource)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}

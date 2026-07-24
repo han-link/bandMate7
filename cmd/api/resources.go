@@ -1,14 +1,21 @@
 package main
 
 import (
+	"bandMate7/internal/model"
 	"bandMate7/internal/store"
 	"errors"
 	"fmt"
 	"net/http"
-
-	"github.com/go-chi/chi/v5"
-	"github.com/google/uuid"
 )
+
+type resourceKey string
+
+const resourceCtx resourceKey = "resource"
+
+func getResourceFromContext(r *http.Request) *model.Resource {
+	resource, _ := r.Context().Value(resourceCtx).(*model.Resource)
+	return resource
+}
 
 // Get resource
 //
@@ -21,27 +28,9 @@ import (
 //	@Failure	500	{object}	ErrorResponse
 //	@Router		/resources/{id} [get]
 func (app *application) getResourceHandler(w http.ResponseWriter, r *http.Request) {
-	idParam := chi.URLParam(r, "resourceId")
-	resourceId, err := uuid.Parse(idParam)
-
-	if err != nil {
-		app.internalServerError(w, r, err)
-		return
-	}
+	resource := getResourceFromContext(r)
 
 	ctx := r.Context()
-
-	resource, err := app.store.Resources.GetByID(ctx, resourceId)
-	if err != nil {
-		switch {
-		case errors.Is(err, store.ErrNotFound):
-			app.notFoundResponse(w, r, err)
-		default:
-			app.internalServerError(w, r, err)
-		}
-		return
-	}
-
 	object, err := app.store.Resources.Open(ctx, resource)
 	if err != nil {
 		switch {
@@ -61,4 +50,23 @@ func (app *application) getResourceHandler(w http.ResponseWriter, r *http.Reques
 	w.Header().Set("Content-Type", contentType)
 	w.Header().Set("Content-Disposition", fmt.Sprintf("inline; filename=%q", resource.Filename))
 	http.ServeContent(w, r, resource.Filename, object.LastModified, object)
+}
+
+// Get resource meta
+//
+//	@Summary	Get resource by id
+//	@Tags		resources
+//	@Produce	json
+//	@Param		id	path		string			true	"Resource ID"	Format(uuid)
+//	@Success	200	{object}	model.Resource	"Resource Meta"
+//	@Failure	404	{object}	ErrorResponse
+//	@Failure	500	{object}	ErrorResponse
+//	@Router		/resources/{id}/meta [get]
+func (app *application) getResourceMetaHandler(w http.ResponseWriter, r *http.Request) {
+	resource := getResourceFromContext(r)
+
+	if err := app.jsonResponse(w, http.StatusOK, resource); err != nil {
+		app.internalServerError(w, r, err)
+		return
+	}
 }
