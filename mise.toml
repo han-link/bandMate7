@@ -1,0 +1,49 @@
+monorepo_root = true
+
+[monorepo]
+config_roots = ["app"]
+lockfile = true
+
+[settings]
+task_output = "prefix"
+lockfile = true
+
+[tools]
+air = "1.66"
+docker-cli = "29.6"
+go = "1.26"
+swag = "1.16"
+"go:github.com/go-delve/delve/cmd/dlv" = "1.27"
+
+[tasks.backend-dependencies]
+description = "Start backend dependencies"
+run = "docker compose up -d"
+
+[tasks.backend-dev]
+description = "Start backend in dev mode"
+depends = ["backend-dependencies"]
+run = "air"
+
+[tasks.dev]
+description = "Start project"
+run = [
+    { tasks = ["backend-dev", "//app:dev"]}
+]
+
+[tasks.init-docs]
+description = ""
+run = "swag init -g ./api/main.go -d cmd,internal -o internal/docs"
+
+[tasks.fmt-docs]
+run = "swag fmt -d internal/docs"
+
+[tasks.fmt-doc-comments]
+run = "swag fmt -d ."
+
+
+[tasks.gen-docs]
+description = "Generate swagger docs"
+run = [
+    { task = "init-docs" },
+    { tasks = ["fmt-docs", "fmt-doc-comments"] }
+]

@@ -1,0 +1,19 @@
+[tools]
+node = "24.18"
+npm = "12.0"
+
+[env]
+_.file = '.env'
+
+[tasks.emulator]
+description = "Start android emulator and wait until booted"
+run = "ANDROID_EMULATOR_DEVICE=$ANDROID_EMULATOR_DEVICE sh ./scripts/start-android-emulator.sh"
+
+[tasks.dev]
+description = "Start frontend"
+depends = ["emulator"]
+run = "npm run android"
+
+[tasks.gen-client]
+description = "Generate client"
+run = "npm run generate-client"
