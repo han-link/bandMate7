@@ -34,6 +34,8 @@ func main() {
 		resourceDir: rootDir,
 	}
 
+	cfg.baseUrl = "http://" + cfg.host + cfg.addr
+
 	logDir := "./logs"
 	if err := os.MkdirAll(logDir, os.ModePerm); err != nil {
 		log.Fatalf("failed to create log directory: %v", err)
@@ -96,7 +98,7 @@ func main() {
 
 	storage := store.NewStorage(database, cfg.resourceDir, client, ctx, minioClient, garageBucket)
 
-	services := service.NewServices(&storage, "http://"+cfg.host+cfg.addr)
+	services := service.NewServices(&storage, cfg.baseUrl)
 
 	app := &application{
 		config:  cfg,
