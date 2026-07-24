@@ -66,21 +66,25 @@ func (s *PerformanceService) Create(ctx context.Context, input CreatePerformance
 	return performance, nil
 }
 
-func (s *PerformanceService) performanceAddCoverUrl(p *model.Performance) {
+func (s *PerformanceService) populateResourceUrls(p *model.Performance) {
 	if p == nil {
 		return
 	}
-	if p.Cover == nil {
-		return
+
+	if p.Cover != nil {
+		p.Cover.SetUrl(s.baseUrl)
 	}
-	p.Cover.SetUrl(s.baseUrl)
+
+	for i := range p.Resources {
+		p.Resources[i].SetUrl(s.baseUrl)
+	}
 }
 
 func (s *PerformanceService) GetAll(ctx context.Context) (*[]model.Performance, error) {
 	performances, err := s.store.Performances.GetAll(ctx)
 
 	for i := range performances {
-		s.performanceAddCoverUrl(&performances[i])
+		s.populateResourceUrls(&performances[i])
 	}
 
 	return &performances, err
