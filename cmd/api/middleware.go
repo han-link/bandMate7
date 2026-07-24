@@ -64,3 +64,10 @@ func (app *application) resourceContextMiddleware(next http.Handler) http.Handle
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
+
+func (app *application) requestLogger(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		app.logger.Debugw("Request", "method", r.Method, "path", r.URL.Path)
+		next.ServeHTTP(w, r)
+	})
+}

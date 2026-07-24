@@ -40,6 +40,7 @@ func (app *application) mount() http.Handler {
 	}
 
 	r.Use(cors.Handler(corsOptions))
+	r.Use(app.requestLogger)
 
 	r.Route("/api/v1", func(r chi.Router) {
 		r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("doc.json")))
