@@ -1,6 +1,4 @@
 import { Check, ChevronDown } from "@tamagui/lucide-icons-2";
-import { BlurView } from "expo-blur";
-import { StyleSheet } from "react-native";
 import {
   Adapt,
   Paragraph,
@@ -26,13 +24,17 @@ interface SelectProps {
 
 export function Select({
   isLoading = false,
+  val,
+  setVal,
+  items,
+  label,
   ...props
 }: TamaguiSelectProps<SelectValue> & SelectProps) {
   if (isLoading) return <Paragraph>Loading …</Paragraph>;
   return (
     <TamaguiSelect
-      value={props.val}
-      onValueChange={props.setVal}
+      value={val}
+      onValueChange={setVal}
       disablePreventBodyScroll
       {...props}
     >
@@ -56,13 +58,7 @@ export function Select({
               <Adapt.Contents />
             </Sheet.ScrollView>
           </Sheet.Frame>
-          <Sheet.Overlay backgroundColor="transparent">
-            <BlurView
-              intensity={40}
-              tint="dark"
-              style={StyleSheet.absoluteFill}
-            />
-          </Sheet.Overlay>
+          <Sheet.Overlay backgroundColor="$shadow6" />
         </Sheet>
       </Adapt>
 
@@ -74,9 +70,9 @@ export function Select({
         >
           <TamaguiSelect.Group>
             <TamaguiSelect.Label fontWeight="700">
-              {props.label}
+              {label}
             </TamaguiSelect.Label>
-            {props.items.map((item, i) => {
+            {items.map((item, i) => {
               return (
                 <TamaguiSelect.Item
                   index={i}
