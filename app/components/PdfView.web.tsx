@@ -4,6 +4,7 @@ import { useWindowDimensions } from "react-native";
 import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import { Button, SizableText, Theme, View, XStack, styled } from "tamagui";
+import { PdfViewProps } from "./PdfView";
 
 type ReactPdf = typeof import("react-pdf");
 
@@ -31,7 +32,7 @@ const PagePill = styled(SizableText, {
   overflow: "hidden",
 });
 
-export default function PdfView({ uri }: { uri: string }) {
+export default function PdfView(props: PdfViewProps) {
   const [reactPdf, setReactPdf] = useState<ReactPdf>();
   const [pageNumber, setPageNumber] = useState(1);
   const [numPages, setNumPages] = useState<number>();
@@ -70,7 +71,7 @@ export default function PdfView({ uri }: { uri: string }) {
     setNumPages(numPages);
   }
 
-  if (!uri || !reactPdf) return null;
+  if (!props.resource.url || !reactPdf) return null;
 
   const { Document, Page } = reactPdf;
   const hasSecondPage = !!numPages && pageNumber + 1 <= numPages;
@@ -79,7 +80,7 @@ export default function PdfView({ uri }: { uri: string }) {
 
   return (
     <View flex={1}>
-      <Document file={uri} onLoadSuccess={onDocumentLoadSuccess}>
+      <Document file={props.resource.url} onLoadSuccess={onDocumentLoadSuccess}>
         <XStack gap="$2">
           <Page pageNumber={pageNumber} height={height} />
           {hasSecondPage && (

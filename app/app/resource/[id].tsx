@@ -1,15 +1,29 @@
 import { useLocalSearchParams } from "expo-router";
-import { View } from "tamagui";
+import { View, Text } from "tamagui";
 
 import PdfView from "@/components/PdfView";
+import { useQuery } from "@tanstack/react-query";
+import { getResourcesByIdMetaOptions } from "@/client/@tanstack/react-query.gen";
 
 export default function PerformanceView() {
   const params = useLocalSearchParams<{ id: string }>();
-  const host = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:8080";
-  const source = `${host}/api/v1/resources/${params.id}`;
+  const resourceQuery = useQuery(getResourcesByIdMetaOptions({
+    path: {
+      id: params.id
+    }
+  }))
+
+  if (resourceQuery.error) {
+    return <Text>Error querying resource</Text>
+  }
+
+  if (!resourceQuery.data) {
+    return <Text>Resource not found</Text>
+  }
+
   return (
     <View flex={1} items="center">
-      <PdfView uri={source} />
+      <PdfView resource={resourceQuery.data} />
     </View>
   );
 }
