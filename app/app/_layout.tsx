@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { useColorScheme } from "react-native";
 import "react-native-reanimated";
 import { TamaguiProvider } from "tamagui";
+import * as ScreenOrientation from "expo-screen-orientation"
 
 import { client } from "@/client/client.gen";
 import { config } from "@/tamagui.config";
@@ -39,6 +40,13 @@ export default function RootLayout() {
   }, [error]);
 
   useEffect(() => {
+    const unlockScreenOerientation = async () => {
+      await ScreenOrientation.unlockAsync()
+    }
+    unlockScreenOerientation()
+  }, [])
+
+  useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
     }
@@ -47,6 +55,8 @@ export default function RootLayout() {
   if (!loaded) {
     return null;
   }
+
+  
 
   return <RootLayoutNav />;
 }
