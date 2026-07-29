@@ -14,11 +14,11 @@ interface Value {
 
 export type SelectValue = Lowercase<Value["value"]>;
 
-interface SelectProps {
+interface SelectProps extends TamaguiSelectProps<SelectValue> {
   val?: SelectValue;
   setVal: (val: SelectValue) => void;
   items: Value[];
-  label: string;
+  label?: string;
   isLoading?: boolean;
 }
 
@@ -29,7 +29,7 @@ export function Select({
   items,
   label,
   ...props
-}: TamaguiSelectProps<SelectValue> & SelectProps) {
+}: SelectProps) {
   if (isLoading) return <Paragraph>Loading …</Paragraph>;
   return (
     <TamaguiSelect
@@ -42,6 +42,7 @@ export function Select({
         iconAfter={ChevronDown}
         borderRadius="$4"
         backgroundColor="$background"
+        width={"auto"}
       >
         <TamaguiSelect.Value placeholder="Something" />
       </TamaguiSelect.Trigger>
@@ -69,9 +70,9 @@ export function Select({
           borderColor="$borderColor"
         >
           <TamaguiSelect.Group>
-            <TamaguiSelect.Label fontWeight="700">
+            {label && (<TamaguiSelect.Label fontWeight="700">
               {label}
-            </TamaguiSelect.Label>
+            </TamaguiSelect.Label>)}
             {items.map((item, i) => {
               return (
                 <TamaguiSelect.Item
