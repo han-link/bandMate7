@@ -3,13 +3,17 @@ import { H1, Button, XStack } from "tamagui";
 
 import { PerformancesGrid } from "@/features/performances/PerformancesGrid";
 import { PerformancesList } from "@/features/performances/PerformancesList";
-import { Select } from "@/components/Select";
+import { Select, SelectValue } from "@/components/Select";
 import { ViewMode, ViewToggle } from "@/components/ViewToggle";
+import { ArrowDownWideNarrow, ArrowUpWideNarrow } from "@tamagui/lucide-icons-2";
 import { useState } from "react";
 
 export default function TabOneScreen() {
   const router = useRouter();
+  const sortOptions = [{name: "Name", value: "name"}, {name: "Created", value: "created_at"}]
   const [mode, setMode] = useState<ViewMode>("grid")
+  const [desc, setDesc] = useState<boolean>(false)
+  const [orderBy, setOrderBy] = useState<SelectValue>("name")
   return (
     <>
       <H1>Performances</H1>
@@ -24,10 +28,13 @@ export default function TabOneScreen() {
       </XStack>
       <XStack gap={"$2"} justify={"flex-end"} mb={"$4"}>
         <ViewToggle value={mode} onChange={setMode}/>
-        <Select setVal={()=> {}} items={[]} />
+        <Select val={orderBy} setVal={setOrderBy} items={sortOptions} />
+          <Button onPress={() => setDesc(!desc)}>
+            { desc ? <ArrowDownWideNarrow/> : <ArrowUpWideNarrow /> }
+          </Button>
       </XStack>
-      {mode === 'grid' && <PerformancesGrid />}
-      {mode === 'list' && <PerformancesList />}
+      {mode === 'grid' && <PerformancesGrid orderBy={orderBy} desc={desc} />}
+      {mode === 'list' && <PerformancesList orderBy={orderBy} desc={desc} />}
     </>
   );
 }

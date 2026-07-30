@@ -24,6 +24,20 @@ const docTemplate = `{
                     "performances"
                 ],
                 "summary": "Get all performances",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "description": "Desc",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order By",
+                        "name": "orderBy",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",

@@ -4,9 +4,17 @@ import { Paragraph, XStack } from "tamagui";
 import { getPerformancesOptions } from "@/client/@tanstack/react-query.gen";
 
 import { PerformanceCard } from "./PerformanceCard";
+import { Pagination } from "@/app/types/pagination";
 
-export function PerformancesGrid() {
-  const performancesQuery = useQuery(getPerformancesOptions());
+interface PerformancesGridProps extends Pagination{}
+
+export function PerformancesGrid(props: PerformancesGridProps) {
+  const performancesQuery = useQuery(getPerformancesOptions({
+    query: {
+      desc: props.desc,
+      orderBy: props.orderBy
+    }
+  }));
 
   if (performancesQuery.isLoading) return <Paragraph>Loading …</Paragraph>;
 

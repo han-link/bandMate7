@@ -57,6 +57,15 @@ info:
 paths:
   /performances:
     get:
+      parameters:
+      - description: Desc
+        in: query
+        name: desc
+        type: boolean
+      - description: Order By
+        in: query
+        name: orderBy
+        type: string
       produces:
       - application/json
       responses:

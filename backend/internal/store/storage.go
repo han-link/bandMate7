@@ -21,7 +21,7 @@ var (
 
 type Performances interface {
 	Create(ctx context.Context, performance *model.Performance) error
-	GetAll(ctx context.Context) ([]model.Performance, error)
+	GetAll(ctx context.Context, pq PaginatedQuery) ([]model.Performance, error)
 	Delete(ctx context.Context, performance *model.Performance) error
 	GetByID(ctx context.Context, id uuid.UUID) (*model.Performance, error)
 	SetCover(ctx context.Context, performance *model.Performance, resource *model.Resource) error

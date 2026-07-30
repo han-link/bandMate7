@@ -4,11 +4,12 @@ import (
 	"bandMate7/internal/model"
 	"bandMate7/internal/store"
 	"context"
+	"net/http"
 )
 
 type Performances interface {
 	Create(ctx context.Context, input CreatePerformanceRequest) (*model.Performance, error)
-	GetAll(ctx context.Context) (*[]model.Performance, error)
+	GetAll(ctx context.Context, r *http.Request) (*[]model.Performance, error)
 }
 
 type Services struct {

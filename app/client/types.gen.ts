@@ -38,7 +38,16 @@ export type MainErrorResponse = {
 export type GetPerformancesData = {
     body?: never;
     path?: never;
-    query?: never;
+    query?: {
+        /**
+         * Desc
+         */
+        desc?: boolean;
+        /**
+         * Order By
+         */
+        orderBy?: string;
+    };
     url: '/performances';
 };
 

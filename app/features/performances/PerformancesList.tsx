@@ -6,6 +6,7 @@ import { createColumnHelper, useReactTable, getCoreRowModel, flexRender } from "
 import { useRef } from "react"
 import { Avatar, Text, Paragraph } from "tamagui"
 import { useRouter } from "expo-router";
+import { Pagination } from "@/app/types/pagination";
 
 type Item = {
     coverUrl: string
@@ -41,9 +42,16 @@ const columns = [
     }),
 ]
 
-export function PerformancesList() {
+interface PerformancesListProps extends Pagination {}
+
+export function PerformancesList(props: PerformancesListProps) {
     const router = useRouter();
-    const performancesQuery = useQuery(getPerformancesOptions());
+    const performancesQuery = useQuery(getPerformancesOptions({
+        query: {
+            desc: props.desc,
+            orderBy: props.orderBy
+        }
+    }));
 
     if (performancesQuery.isLoading) return <Paragraph>Loading …</Paragraph>;
 
@@ -137,7 +145,7 @@ export function PerformancesList() {
                     rowCounter.current++
                     return (
                         <Table.Row
-                        onPress={() => router.navigate(`/resource/${row.original.resourceId}`)}
+                            onPress={() => router.navigate(`/resource/${row.original.resourceId}`)}
                             hoverStyle={{
                                 bg: '$color2',
                             }}

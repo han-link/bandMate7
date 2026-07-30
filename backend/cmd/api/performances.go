@@ -47,13 +47,15 @@ func (app *application) deletePerformancesHandler(w http.ResponseWriter, r *http
 //	@Summary	Get all performances
 //	@Tags		performances
 //	@Produce	json
-//	@Success	200	{object}	[]model.Performance
-//	@Failure	500	{object}	ErrorResponse
+//	@Param		desc	query		boolean	false	"Desc"
+//	@Param		orderBy	query		string	false	"Order By"
+//	@Success	200		{object}	[]model.Performance
+//	@Failure	500		{object}	ErrorResponse
 //	@Router		/performances [get]
 func (app *application) getPerformancesHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	performances, err := app.service.Performances.GetAll(ctx)
+	performances, err := app.service.Performances.GetAll(ctx, r)
 
 	if err != nil {
 		app.internalServerError(w, r, err)

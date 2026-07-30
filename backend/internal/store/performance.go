@@ -14,9 +14,10 @@ type PerformanceStore struct {
 	db *gorm.DB
 }
 
-func (s *PerformanceStore) GetAll(ctx context.Context) ([]model.Performance, error) {
+func (s *PerformanceStore) GetAll(ctx context.Context, pq PaginatedQuery) ([]model.Performance, error) {
 	var performances []model.Performance
 	err := s.db.WithContext(ctx).
+		Scopes(pq.paginateResult).
 		Preload("Cover").
 		Preload("Resources").
 		Preload("Resources.UserRole").

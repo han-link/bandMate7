@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"mime/multipart"
+	"net/http"
 
 	"github.com/google/uuid"
 )
@@ -80,8 +81,22 @@ func (s *PerformanceService) populateResourceUrls(p *model.Performance) {
 	}
 }
 
-func (s *PerformanceService) GetAll(ctx context.Context) (*[]model.Performance, error) {
-	performances, err := s.store.Performances.GetAll(ctx)
+func (s *PerformanceService) GetAll(ctx context.Context, r *http.Request) (*[]model.Performance, error) {
+	// Set defaults
+	pr := PaginatedRequest{
+		Desc:    false,
+		OrderBy: "name",
+	}
+	pr, err := pr.Parse(r)
+	if err != nil {
+		return nil, err
+	}
+
+	pq := store.PaginatedQuery{
+		Desc:    pr.Desc,
+		OrderBy: pr.OrderBy,
+	}
+	performances, err := s.store.Performances.GetAll(ctx, pq)
 
 	for i := range performances {
 		s.populateResourceUrls(&performances[i])

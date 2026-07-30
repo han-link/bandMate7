@@ -33,6 +33,11 @@ export const zMainErrorResponse = z.object({
     error: z.string().optional()
 });
 
+export const zGetPerformancesQuery = z.object({
+    desc: z.boolean().optional(),
+    orderBy: z.string().optional()
+});
+
 /**
  * OK
  */
