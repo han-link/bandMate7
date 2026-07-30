@@ -67,7 +67,7 @@ func (app *application) resourceContextMiddleware(next http.Handler) http.Handle
 
 func (app *application) requestLogger(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		app.logger.Debugw("Request", "method", r.Method, "path", r.URL.Path)
+		app.logger.Debugw("Request", "method", r.Method, "path", r.URL.Path+"?"+r.URL.RawQuery)
 		next.ServeHTTP(w, r)
 	})
 }
