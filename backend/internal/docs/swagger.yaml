@@ -9,12 +9,12 @@ definitions:
         type: string
       id:
         type: string
-      name:
-        type: string
       resources:
         items:
           $ref: '#/definitions/Resource'
         type: array
+      titel:
+        type: string
       updatedAt:
         type: string
     type: object

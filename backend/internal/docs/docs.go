@@ -464,14 +464,14 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "name": {
-                    "type": "string"
-                },
                 "resources": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/Resource"
                     }
+                },
+                "titel": {
+                    "type": "string"
                 },
                 "updatedAt": {
                     "type": "string"

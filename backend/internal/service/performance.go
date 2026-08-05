@@ -33,7 +33,7 @@ func (s *PerformanceService) Create(ctx context.Context, input CreatePerformance
 		return nil, ErrUserRoleIdRequiredForScore
 	}
 
-	performance := &model.Performance{Name: input.Name}
+	performance := &model.Performance{Titel: input.Name}
 	if input.Bpm != nil {
 		performance.Bpm = input.Bpm
 	}
