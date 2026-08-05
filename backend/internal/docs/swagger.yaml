@@ -7,8 +7,12 @@ definitions:
         $ref: '#/definitions/Resource'
       createdAt:
         type: string
+      duration:
+        type: integer
       id:
         type: string
+      released:
+        type: integer
       resources:
         items:
           $ref: '#/definitions/Resource'

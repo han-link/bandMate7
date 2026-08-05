@@ -4,8 +4,10 @@ import "github.com/google/uuid"
 
 type Performance struct {
 	BaseModel
-	Titel string `json:"titel"`
-	Bpm   *int   `json:"bpm"`
+	Titel    string `json:"titel"`
+	Bpm      *int   `json:"bpm"`
+	Released *int   `json:"released"`
+	Duration *int   `json:"duration"`
 
 	CoverID *uuid.UUID `json:"-"`
 	Cover   *Resource  `json:"cover" gorm:"foreignKey:CoverID;references:ID;-:migration"`

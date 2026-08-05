@@ -461,8 +461,14 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
+                "duration": {
+                    "type": "integer"
+                },
                 "id": {
                     "type": "string"
+                },
+                "released": {
+                    "type": "integer"
                 },
                 "resources": {
                     "type": "array",
