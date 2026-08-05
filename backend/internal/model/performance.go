@@ -21,4 +21,5 @@ type Performance struct {
 	Resources   []Resource   `json:"resources" gorm:"foreignKey:PerformanceID;constraint:OnDelete:CASCADE;"`
 	Setlists    []Setlist    `json:"-" gorm:"many2many:setlist_performances"`
 	Collections []Collection `json:"-" gorm:"many2many:collections_performances"`
+	Genres      []Genre      `json:"genres" gorm:"many2many:genres_performances"`
 } //	@name	Performance

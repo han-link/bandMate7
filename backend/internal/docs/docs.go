@@ -467,6 +467,12 @@ const docTemplate = `{
                 "duration": {
                     "type": "integer"
                 },
+                "genres": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Genre"
+                    }
+                },
                 "id": {
                     "type": "string"
                 },
@@ -542,6 +548,23 @@ const docTemplate = `{
             }
         },
         "model.Artist": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "titel": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Genre": {
             "type": "object",
             "properties": {
                 "createdAt": {

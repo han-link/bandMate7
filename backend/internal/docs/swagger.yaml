@@ -11,6 +11,10 @@ definitions:
         type: string
       duration:
         type: integer
+      genres:
+        items:
+          $ref: '#/definitions/model.Genre'
+        type: array
       id:
         type: string
       meter:
@@ -60,6 +64,17 @@ definitions:
         type: string
     type: object
   model.Artist:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      titel:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  model.Genre:
     properties:
       createdAt:
         type: string
