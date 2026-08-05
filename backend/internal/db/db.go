@@ -45,6 +45,7 @@ func New(debug bool) (*gorm.DB, error) {
 		&model.Performance{},
 		&model.Resource{},
 		&model.Setlist{},
+		&model.Artist{},
 	)
 
 	var userRoles = []model.UserRole{

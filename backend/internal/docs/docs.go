@@ -452,6 +452,9 @@ const docTemplate = `{
         "Performance": {
             "type": "object",
             "properties": {
+                "artist": {
+                    "$ref": "#/definitions/model.Artist"
+                },
                 "bpm": {
                     "type": "integer"
                 },
@@ -531,6 +534,23 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Artist": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "titel": {
+                    "type": "string"
+                },
+                "updatedAt": {
                     "type": "string"
                 }
             }
