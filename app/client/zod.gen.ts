@@ -19,18 +19,44 @@ export const zResource = z.object({
     user_role: zUserRole.optional()
 });
 
-export const zPerformance = z.object({
-    bpm: z.int().optional(),
-    cover: zResource.optional(),
+export const zMainErrorResponse = z.object({
+    error: z.string().optional()
+});
+
+export const zModelArtist = z.object({
     createdAt: z.string().optional(),
     id: z.string().optional(),
-    name: z.string().optional(),
-    resources: z.array(zResource).optional(),
+    titel: z.string().optional(),
     updatedAt: z.string().optional()
 });
 
-export const zMainErrorResponse = z.object({
-    error: z.string().optional()
+export const zModelGenre = z.object({
+    createdAt: z.string().optional(),
+    id: z.string().optional(),
+    titel: z.string().optional(),
+    updatedAt: z.string().optional()
+});
+
+export const zModelMeter = z.object({
+    createdAt: z.string().optional(),
+    id: z.string().optional(),
+    titel: z.string().optional(),
+    updatedAt: z.string().optional()
+});
+
+export const zPerformance = z.object({
+    artist: zModelArtist.optional(),
+    bpm: z.int().optional(),
+    cover: zResource.optional(),
+    createdAt: z.string().optional(),
+    duration: z.int().optional(),
+    genres: z.array(zModelGenre).optional(),
+    id: z.string().optional(),
+    meter: zModelMeter.optional(),
+    released: z.int().optional(),
+    resources: z.array(zResource).optional(),
+    titel: z.string().optional(),
+    updatedAt: z.string().optional()
 });
 
 export const zGetPerformancesQuery = z.object({

@@ -85,7 +85,7 @@ func (s *PerformanceService) GetAll(ctx context.Context, r *http.Request) (*[]mo
 	// Set defaults
 	pr := PaginatedRequest{
 		Desc:    false,
-		OrderBy: "name",
+		OrderBy: "titel",
 	}
 	pr, err := pr.Parse(r)
 	if err != nil {

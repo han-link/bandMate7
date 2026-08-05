@@ -27,7 +27,7 @@ const columns = [
         header: () => 'Cover',
         cell: (info) => (
             <Avatar size="$5" rounded="$3">
-                <Avatar.Image accessibilityLabel="Cover" src={info.getValue()} />
+                <Avatar.Image alt="Cover" src={info.getValue()} />
                 <Avatar.Fallback bg="$color6" />
             </Avatar>
         ),
@@ -64,7 +64,7 @@ export function PerformancesList(props: PerformancesListProps) {
     const fistPdfId = (p: Performance): Resource | undefined =>
         p.resources?.filter((resource) => resource.type === "application/pdf")[0];
 
-    const data: Item[] = performancesQuery.data.map((p) => ({ coverUrl: p.cover?.url || "", name: p.name || "", createdAt: p.createdAt || "", resourceId: fistPdfId(p)?.id }))
+    const data: Item[] = performancesQuery.data.map((p) => ({ coverUrl: p.cover?.url || "", name: p.titel || "", createdAt: p.createdAt || "", resourceId: fistPdfId(p)?.id }))
 
     const table = useReactTable({
         data: data,
