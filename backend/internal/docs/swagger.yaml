@@ -13,6 +13,8 @@ definitions:
         type: integer
       id:
         type: string
+      meter:
+        $ref: '#/definitions/model.Meter'
       released:
         type: integer
       resources:
@@ -58,6 +60,17 @@ definitions:
         type: string
     type: object
   model.Artist:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      titel:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  model.Meter:
     properties:
       createdAt:
         type: string

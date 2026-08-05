@@ -470,6 +470,9 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "meter": {
+                    "$ref": "#/definitions/model.Meter"
+                },
                 "released": {
                     "type": "integer"
                 },
@@ -539,6 +542,23 @@ const docTemplate = `{
             }
         },
         "model.Artist": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "titel": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Meter": {
             "type": "object",
             "properties": {
                 "createdAt": {
