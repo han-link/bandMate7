@@ -84,7 +84,7 @@ export const UserRoleSchema = {
         id: {
             type: 'string'
         },
-        name: {
+        titel: {
             type: 'string'
         },
         updatedAt: {

@@ -53,7 +53,7 @@ definitions:
         type: string
       id:
         type: string
-      name:
+      titel:
         type: string
       updatedAt:
         type: string

@@ -32,7 +32,7 @@ export type Resource = {
 export type UserRole = {
     createdAt?: string;
     id?: string;
-    name?: string;
+    titel?: string;
     updatedAt?: string;
 };
 

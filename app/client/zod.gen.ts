@@ -5,7 +5,7 @@ import * as z from 'zod';
 export const zUserRole = z.object({
     createdAt: z.string().optional(),
     id: z.string().optional(),
-    name: z.string().optional(),
+    titel: z.string().optional(),
     updatedAt: z.string().optional()
 });
 
