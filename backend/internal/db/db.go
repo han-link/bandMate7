@@ -60,6 +60,19 @@ func New(debug bool) (*gorm.DB, error) {
 	}
 	db.Clauses(clause.OnConflict{DoNothing: true}).Create(&userRoles)
 
+	var meters = []model.Meter{
+		{Titel: "3/4"},
+		{Titel: "4/4"},
+		{Titel: "6/8"},
+	}
+	db.Clauses(clause.OnConflict{DoNothing: true}).Create(&meters)
+
+	var genres = []model.Genre{
+		{Titel: "Rock"},
+		{Titel: "Pop"},
+	}
+	db.Clauses(clause.OnConflict{DoNothing: true}).Create(&genres)
+
 	if err != nil {
 		return nil, err
 	}
