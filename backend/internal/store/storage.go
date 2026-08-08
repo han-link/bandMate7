@@ -40,10 +40,16 @@ type UserRoles interface {
 	GetAll(ctx context.Context) ([]model.UserRole, error)
 }
 
+type Artists interface {
+	GetAll(ctx context.Context) ([]model.Artist, error)
+	Create(ctx context.Context, artist *model.Artist) error
+}
+
 type Storage struct {
 	Performances Performances
 	Resources    Resources
 	UserRoles    UserRoles
+	Artists      Artists
 }
 
 func NewStorage(db *gorm.DB, resourceDir string, garageClient *garage.APIClient, garageCtx context.Context, minioClient *minio.Client, bucket string) Storage {
@@ -51,5 +57,6 @@ func NewStorage(db *gorm.DB, resourceDir string, garageClient *garage.APIClient,
 		Performances: &PerformanceStore{db},
 		Resources:    &ResourceStore{db, resourceDir, garageClient, garageCtx, minioClient, bucket},
 		UserRoles:    &UserRoleStore{db},
+		Artists:      &ArtistStore{db},
 	}
 }
