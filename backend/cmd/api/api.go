@@ -69,6 +69,10 @@ func (app *application) mount() http.Handler {
 		r.Route("/userRoles", func(r chi.Router) {
 			r.Get("/", app.getUserRolesHandler)
 		})
+		r.Route("/artists", func(r chi.Router) {
+			r.Get("/", app.getArtistsHandler)
+			r.Post("/", app.createArtistHandler)
+		})
 	})
 	return r
 }

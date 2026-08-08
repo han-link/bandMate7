@@ -58,6 +58,13 @@ definitions:
       updatedAt:
         type: string
     type: object
+  main.CreateArtistPayload:
+    properties:
+      title:
+        type: string
+    required:
+    - title
+    type: object
   main.ErrorResponse:
     properties:
       error:
@@ -100,6 +107,50 @@ info:
   contact: {}
   title: BandMate7 API
 paths:
+  /artists:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Artist'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Get all artists
+      tags:
+      - artists
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Artist payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.CreateArtistPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Artist'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Creates a artist
+      tags:
+      - artists
   /performances:
     get:
       parameters:
