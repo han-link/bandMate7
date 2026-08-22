@@ -5,7 +5,7 @@ config_roots = ["app", "backend"]
 lockfile = true
 
 [settings]
-task_output = "prefix"
+task.output = "prefix"
 lockfile = true
 
 [tools]
