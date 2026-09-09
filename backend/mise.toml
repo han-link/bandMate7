@@ -10,6 +10,14 @@ description = "Start backend in dev mode"
 depends = ["//:backend-dependencies"]
 run = "air"
 
+[tasks.test]
+description = "Test the backend"
+run = "go test ./..."
+
+[tasks.test-cov]
+description = "Show test coverage of the backend"
+run = "go test ./... -coverprofile=cover.out && go tool cover -html=cover.out" 
+
 [tasks.init-docs]
 description = ""
 run = "swag init -g ./api/main.go -d cmd,internal -o internal/docs"
@@ -23,7 +31,4 @@ run = "swag fmt -d ."
 
 [tasks.gen-docs]
 description = "Generate swagger docs"
-run = [
-    { task = "init-docs" },
-    { tasks = ["fmt-docs", "fmt-doc-comments"] }
-]
+run = [{ task = "init-docs" }, { tasks = ["fmt-docs", "fmt-doc-comments"] }]
