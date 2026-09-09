@@ -37,9 +37,6 @@ func New(debug bool) (*gorm.DB, error) {
 		$$;
 	`)
 
-	db.SetupJoinTable(&model.Setlist{}, "Performances", &model.SetlistPerformance{})
-	db.SetupJoinTable(&model.Performance{}, "Setlists", &model.SetlistPerformance{})
-
 	err = db.AutoMigrate(
 		&model.UserRole{},
 		&model.Performance{},
@@ -48,6 +45,7 @@ func New(debug bool) (*gorm.DB, error) {
 		&model.Artist{},
 		&model.Meter{},
 		&model.Collection{},
+		&model.SetlistPerformance{},
 	)
 
 	var userRoles = []model.UserRole{

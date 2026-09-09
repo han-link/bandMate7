@@ -8,13 +8,14 @@ import (
 
 type Setlist struct {
 	BaseModel
-	Titel        string        `json:"titel"`
-	Performances []Performance `gorm:"many2many:setlist_performances"`
+	Titel string               `json:"titel"`
+	Items []SetlistPerformance `json:"items" gorm:"foreignKey:SetlistID"`
 }
 
 type SetlistPerformance struct {
 	SetlistID     uuid.UUID `gorm:"primaryKey"`
 	PerformanceID uuid.UUID `gorm:"primaryKey"`
-	Position      int
+	Position      int       `json:"position"`
 	CreatedAt     time.Time
+	Performance   Performance `json:"performance" gorm:"foreignKey:PerformanceID"`
 }
