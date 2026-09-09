@@ -1,0 +1,71 @@
+# Configuration file for `prek`, a git hook framework written in Rust.
+# See https://prek.j178.dev for more information.
+#:schema https://www.schemastore.org/prek.json
+
+default_install_hook_types = ["pre-commit", "commit-msg", "pre-push"]
+default_stages = ["pre-commit"]
+
+[[repos]]
+repo = "builtin"
+hooks = [
+    { id = "trailing-whitespace" },
+    { id = "end-of-file-fixer" },
+    { id = "check-added-large-files" },
+    { id = "check-merge-conflict" },
+    { id = "check-yaml" },
+    { id = "check-json" },
+    { id = "detect-private-key" },
+    { id = "mixed-line-ending" },
+]
+
+[[repos]]
+repo = "local"
+
+[[repos.hooks]]
+id = "golangci-lint-fmt"
+name = "golangci-lint fmt"
+entry = "golangci-lint fmt"
+language = "system"
+types = ["go"]
+pass_filenames = false
+require_serial = true
+priority = 0
+
+[[repos.hooks]]
+id = "golangci-lint"
+name = "golangci-lint"
+entry = "golangci-lint run --fix"
+language = "system"
+types = ["go"]
+pass_filenames = false
+require_serial = true
+priority = 10
+
+[[repos.hooks]]
+id = "go-mod-tidy"
+name = "go mod tidy"
+entry = "go mod tidy"
+language = "system"
+files = '(\.go|go\.mod|go\.sum)$'
+pass_filenames = false
+priority = 20
+
+[[repos.hooks]]
+id = "go-test"
+name = "go test"
+entry = "go test -race ./..."
+language = "system"
+types = ["go"]
+pass_filenames = false
+stages = ["pre-push"]
+priority = 30
+
+[[repos]]
+repo = "https://github.com/gitleaks/gitleaks"
+rev = "v8.30.1"
+hooks = [{ id = "gitleaks" }]
+
+[[repos]]
+repo = "https://github.com/compilerla/conventional-pre-commit"
+rev = "91ab4bf57e58b32adf1a122681f6ebe164d081c8"                      # v4.4.0
+hooks = [{ id = "conventional-pre-commit", stages = ["commit-msg"] }]

@@ -10,6 +10,7 @@ lockfile = true
 
 [tools]
 docker-cli = "29.6"
+prek = "0.5.2"
 
 [tasks.backend-dependencies]
 description = "Start backend dependencies"
@@ -18,6 +19,4 @@ run = "docker compose up -d"
 
 [tasks.dev]
 description = "Start project"
-run = [
-    { tasks = ["//backend:dev", "//app:dev"]}
-]
+run = [{ tasks = ["//backend:dev", "//app:dev"] }]

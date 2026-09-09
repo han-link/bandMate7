@@ -16,7 +16,7 @@ run = "go test ./..."
 
 [tasks.test-cov]
 description = "Show test coverage of the backend"
-run = "go test ./... -coverprofile=cover.out && go tool cover -html=cover.out" 
+run = "go test ./... -coverprofile=cover.out && go tool cover -html=cover.out"
 
 [tasks.init-docs]
 description = ""
