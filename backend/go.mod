@@ -3,10 +3,12 @@ module bandMate7
 go 1.25.0
 
 require (
+	git.deuxfleurs.fr/garage-sdk/garage-admin-sdk-golang v0.0.0-20260423203333-1fad3da9c87b
 	github.com/go-chi/chi/v5 v5.2.3
 	github.com/go-chi/cors v1.2.2
 	github.com/go-playground/validator/v10 v10.29.0
 	github.com/google/uuid v1.6.0
+	github.com/minio/minio-go/v7 v7.2.1
 	github.com/swaggo/http-swagger/v2 v2.0.2
 	github.com/swaggo/swag v1.16.6
 	go.uber.org/zap v1.27.1
@@ -15,7 +17,6 @@ require (
 )
 
 require (
-	git.deuxfleurs.fr/garage-sdk/garage-admin-sdk-golang v0.0.0-20260423203333-1fad3da9c87b // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
@@ -40,11 +41,8 @@ require (
 	github.com/mailru/easyjson v0.7.6 // indirect
 	github.com/minio/crc64nvme v1.1.1 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
-	github.com/minio/minio-go/v7 v7.2.1 // indirect
 	github.com/philhofer/fwd v1.2.0 // indirect
-	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/rs/xid v1.6.0 // indirect
-	github.com/stretchr/testify v1.11.1 // indirect
 	github.com/swaggo/files/v2 v2.0.0 // indirect
 	github.com/tinylib/msgp v1.6.1 // indirect
 	github.com/zeebo/xxh3 v1.1.0 // indirect

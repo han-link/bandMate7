@@ -73,6 +73,15 @@ func (app *application) mount() http.Handler {
 			r.Get("/", app.getArtistsHandler)
 			r.Post("/", app.createArtistHandler)
 		})
+		r.Route("/setlists", func(r chi.Router) {
+			r.Post("/", app.createSetlistHandler)
+			r.Get("/", app.getSetlistsHandler)
+			r.Route("/{setlistId}", func(r chi.Router) {
+				r.Use(app.setlistContextMiddleware)
+				r.Get("/", app.getSetlistHandler)
+				r.Put("/order", app.changeSetlistOrderHandler)
+			})
+		})
 	})
 	return r
 }

@@ -488,6 +488,171 @@ const docTemplate = `{
                 }
             }
         },
+        "/setlists": {
+            "get": {
+                "tags": [
+                    "setlists"
+                ],
+                "summary": "Get all setlists",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/service.SelistWithoutPerformance"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "setlists"
+                ],
+                "summary": "Creates a setlist",
+                "parameters": [
+                    {
+                        "description": "Setlist payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/main.CreateSetlistPayload"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Setlist"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/main.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/setlists/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "setlists"
+                ],
+                "summary": "Get setlist by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Setlists ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Setlist",
+                        "schema": {
+                            "$ref": "#/definitions/model.Setlist"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/main.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/setlists/{id}/order": {
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "setlists"
+                ],
+                "summary": "Chane setlist order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Setlists ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ChangeSetlistOrderPayload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.ChangeOrderPayload"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Setlist",
+                        "schema": {
+                            "$ref": "#/definitions/model.Setlist"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/main.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/main.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/userRoles": {
             "get": {
                 "tags": [
@@ -618,6 +783,23 @@ const docTemplate = `{
                 }
             }
         },
+        "main.CreateSetlistPayload": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "performanceIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "main.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -670,6 +852,88 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "titel": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Setlist": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.SetlistPerformance"
+                    }
+                },
+                "titel": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SetlistPerformance": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "performance": {
+                    "$ref": "#/definitions/Performance"
+                },
+                "performanceID": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "integer"
+                },
+                "setlistID": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.ChangeOrderItem": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "integer"
+                }
+            }
+        },
+        "service.ChangeOrderPayload": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/service.ChangeOrderItem"
+                    }
+                }
+            }
+        },
+        "service.SelistWithoutPerformance": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "title": {
                     "type": "string"
                 },
                 "updatedAt": {

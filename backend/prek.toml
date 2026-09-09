@@ -4,7 +4,7 @@ repo = "local"
 [[repos.hooks]]
 id = "golangci-lint-fmt"
 name = "golangci-lint fmt"
-entry = "golangci-lint fmt"
+entry = "mise exec -- golangci-lint fmt"
 language = "system"
 types = ["go"]
 pass_filenames = false
@@ -14,7 +14,7 @@ priority = 0
 [[repos.hooks]]
 id = "golangci-lint"
 name = "golangci-lint"
-entry = "golangci-lint run --fix"
+entry = "mise exec -- golangci-lint run --fix"
 language = "system"
 types = ["go"]
 pass_filenames = false

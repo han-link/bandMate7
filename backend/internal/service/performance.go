@@ -43,7 +43,7 @@ func (s *PerformanceService) Create(ctx context.Context, input CreatePerformance
 	}
 
 	if input.Cover != nil {
-		err, resource := s.store.Resources.Create(ctx, input.Cover, input.CoverHeader, performance, nil)
+		resource, err := s.store.Resources.Create(ctx, input.Cover, input.CoverHeader, performance, nil)
 		if err != nil {
 			return nil, err
 		}
@@ -58,7 +58,7 @@ func (s *PerformanceService) Create(ctx context.Context, input CreatePerformance
 			return nil, err
 		}
 		if input.Score != nil {
-			err, _ = s.store.Resources.Create(ctx, input.Score, input.ScoreHeader, performance, userRole)
+			_, err = s.store.Resources.Create(ctx, input.Score, input.ScoreHeader, performance, userRole)
 			if err != nil {
 				return nil, err
 			}

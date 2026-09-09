@@ -41,7 +41,12 @@ func (app *application) getResourceHandler(w http.ResponseWriter, r *http.Reques
 		}
 		return
 	}
-	defer object.Close()
+
+	defer func() {
+		if err := object.Close(); err != nil {
+			app.logger.Fatal(err)
+		}
+	}()
 
 	contentType := object.ContentType
 	if contentType == "" {
