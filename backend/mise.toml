@@ -1,7 +1,7 @@
 
 [tools]
 air = "1.66"
-go = "1.26"
+go = "1.26.4"
 swag = "1.16"
 "go:github.com/go-delve/delve/cmd/dlv" = "1.27"
 
