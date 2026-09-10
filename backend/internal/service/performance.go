@@ -33,7 +33,7 @@ func (s *PerformanceService) Create(ctx context.Context, input CreatePerformance
 		return nil, ErrUserRoleIdRequiredForScore
 	}
 
-	performance := &model.Performance{Name: input.Name}
+	performance := &model.Performance{Titel: input.Name}
 	if input.Bpm != nil {
 		performance.Bpm = input.Bpm
 	}
@@ -43,7 +43,7 @@ func (s *PerformanceService) Create(ctx context.Context, input CreatePerformance
 	}
 
 	if input.Cover != nil {
-		err, resource := s.store.Resources.Create(ctx, input.Cover, input.CoverHeader, performance, nil)
+		resource, err := s.store.Resources.Create(ctx, input.Cover, input.CoverHeader, performance, nil)
 		if err != nil {
 			return nil, err
 		}
@@ -58,7 +58,7 @@ func (s *PerformanceService) Create(ctx context.Context, input CreatePerformance
 			return nil, err
 		}
 		if input.Score != nil {
-			err, _ = s.store.Resources.Create(ctx, input.Score, input.ScoreHeader, performance, userRole)
+			_, err = s.store.Resources.Create(ctx, input.Score, input.ScoreHeader, performance, userRole)
 			if err != nil {
 				return nil, err
 			}
@@ -85,7 +85,7 @@ func (s *PerformanceService) GetAll(ctx context.Context, r *http.Request) (*[]mo
 	// Set defaults
 	pr := PaginatedRequest{
 		Desc:    false,
-		OrderBy: "name",
+		OrderBy: "titel",
 	}
 	pr, err := pr.Parse(r)
 	if err != nil {

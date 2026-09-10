@@ -4,6 +4,7 @@ import (
 	"bandMate7/internal/model"
 	"context"
 	"errors"
+	"fmt"
 	"os"
 
 	"github.com/google/uuid"
@@ -76,4 +77,23 @@ func (s *PerformanceStore) SetCover(ctx context.Context, performance *model.Perf
 		return err
 	}
 	return nil
+}
+
+func (s *PerformanceStore) CheckPerformancesExist(ctx context.Context, performanceIds []uuid.UUID) ([]uuid.UUID, error) {
+	var missing []uuid.UUID
+	var uuids string
+	for i, pid := range performanceIds {
+		uuids += fmt.Sprintf("uuid('%s')", pid)
+		if i < len(performanceIds)-1 {
+			uuids += ","
+		}
+	}
+	err := s.db.Raw(`
+		SELECT x.id
+		FROM unnest(ARRAY[` + uuids + `]::uuid[]) AS x(id)
+		LEFT JOIN performances p ON p.id = x.id
+		WHERE p.id IS NULL
+	`).Scan(&missing).Error
+
+	return missing, err
 }

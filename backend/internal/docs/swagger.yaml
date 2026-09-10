@@ -1,20 +1,32 @@
 definitions:
   Performance:
     properties:
+      artist:
+        $ref: '#/definitions/model.Artist'
       bpm:
         type: integer
       cover:
         $ref: '#/definitions/Resource'
       createdAt:
         type: string
+      duration:
+        type: integer
+      genres:
+        items:
+          $ref: '#/definitions/model.Genre'
+        type: array
       id:
         type: string
-      name:
-        type: string
+      meter:
+        $ref: '#/definitions/model.Meter'
+      released:
+        type: integer
       resources:
         items:
           $ref: '#/definitions/Resource'
         type: array
+      titel:
+        type: string
       updatedAt:
         type: string
     type: object
@@ -41,20 +53,168 @@ definitions:
         type: string
       id:
         type: string
-      name:
+      titel:
         type: string
       updatedAt:
         type: string
+    type: object
+  main.CreateArtistPayload:
+    properties:
+      title:
+        type: string
+    required:
+    - title
+    type: object
+  main.CreateSetlistPayload:
+    properties:
+      performanceIds:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+    required:
+    - title
     type: object
   main.ErrorResponse:
     properties:
       error:
         type: string
     type: object
+  model.Artist:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      titel:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  model.Genre:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      titel:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  model.Meter:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      titel:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  model.Setlist:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/model.SetlistPerformance'
+        type: array
+      titel:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  model.SetlistPerformance:
+    properties:
+      createdAt:
+        type: string
+      performance:
+        $ref: '#/definitions/Performance'
+      performanceID:
+        type: string
+      position:
+        type: integer
+      setlistID:
+        type: string
+    type: object
+  service.ChangeOrderItem:
+    properties:
+      id:
+        type: string
+      position:
+        type: integer
+    type: object
+  service.ChangeOrderPayload:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/service.ChangeOrderItem'
+        type: array
+    type: object
+  service.SelistWithoutPerformance:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+      updatedAt:
+        type: string
+    type: object
 info:
   contact: {}
   title: BandMate7 API
 paths:
+  /artists:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Artist'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Get all artists
+      tags:
+      - artists
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Artist payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.CreateArtistPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Artist'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Creates a artist
+      tags:
+      - artists
   /performances:
     get:
       parameters:
@@ -325,6 +485,114 @@ paths:
       summary: Get resource by id
       tags:
       - resources
+  /setlists:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/service.SelistWithoutPerformance'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Get all setlists
+      tags:
+      - setlists
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Setlist payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.CreateSetlistPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Setlist'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Creates a setlist
+      tags:
+      - setlists
+  /setlists/{id}:
+    get:
+      parameters:
+      - description: Setlists ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Setlist
+          schema:
+            $ref: '#/definitions/model.Setlist'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Get setlist by id
+      tags:
+      - setlists
+  /setlists/{id}/order:
+    put:
+      parameters:
+      - description: Setlists ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: ChangeSetlistOrderPayload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/service.ChangeOrderPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Setlist
+          schema:
+            $ref: '#/definitions/model.Setlist'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Chane setlist order
+      tags:
+      - setlists
   /userRoles:
     get:
       responses:

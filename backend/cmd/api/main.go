@@ -62,7 +62,11 @@ func main() {
 
 	// Build the logger from the custom configuration
 	must := zap.Must(loggerCfg.Build())
-	defer must.Sync()
+	defer func() {
+		if err := must.Sync(); err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	// Create a sugared logger from the built logger
 	logger := must.Sugar()

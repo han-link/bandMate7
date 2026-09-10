@@ -71,3 +71,31 @@ func (app *application) requestLogger(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
+
+func (app *application) setlistContextMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		idParam := chi.URLParam(r, "setlistId")
+		setlistId, err := uuid.Parse(idParam)
+
+		if err != nil {
+			app.internalServerError(w, r, err)
+			return
+		}
+
+		ctx := r.Context()
+
+		setlist, err := app.store.SetLists.GetByID(ctx, setlistId, store.WithSortedSetlist())
+		if err != nil {
+			switch {
+			case errors.Is(err, store.ErrNotFound):
+				app.notFoundResponse(w, r, err)
+			default:
+				app.internalServerError(w, r, err)
+			}
+			return
+		}
+		ctx = context.WithValue(ctx, setlistCtx, setlist)
+
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}

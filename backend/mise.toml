@@ -1,14 +1,23 @@
 
 [tools]
 air = "1.66"
-go = "1.26"
+go = "1.26.4"
 swag = "1.16"
 "go:github.com/go-delve/delve/cmd/dlv" = "1.27"
+golangci-lint = "2.13.2"
 
 [tasks.dev]
 description = "Start backend in dev mode"
 depends = ["//:backend-dependencies"]
 run = "air"
+
+[tasks.test]
+description = "Test the backend"
+run = "go test ./..."
+
+[tasks.test-cov]
+description = "Show test coverage of the backend"
+run = "go test ./... -coverprofile=cover.out && go tool cover -html=cover.out"
 
 [tasks.init-docs]
 description = ""
@@ -23,7 +32,4 @@ run = "swag fmt -d ."
 
 [tasks.gen-docs]
 description = "Generate swagger docs"
-run = [
-    { task = "init-docs" },
-    { tasks = ["fmt-docs", "fmt-doc-comments"] }
-]
+run = [{ task = "init-docs" }, { tasks = ["fmt-docs", "fmt-doc-comments"] }]

@@ -279,7 +279,7 @@ func (app *application) createPerformanceResourceHandler(w http.ResponseWriter, 
 
 	performance := getPerformanceFromContext(r)
 
-	err, resource := app.store.Resources.Create(ctx, file, header, performance, role)
+	resource, err := app.store.Resources.Create(ctx, file, header, performance, role)
 	if err != nil {
 		app.internalServerError(w, r, err)
 		return
@@ -324,7 +324,7 @@ func (app *application) setCoverHandler(w http.ResponseWriter, r *http.Request) 
 
 	}
 
-	err, resource := app.store.Resources.Create(ctx, file, header, performance, nil)
+	resource, err := app.store.Resources.Create(ctx, file, header, performance, nil)
 	if err != nil {
 		app.internalServerError(w, r, err)
 		return

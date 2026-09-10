@@ -3,6 +3,9 @@
 export const PerformanceSchema = {
     type: 'object',
     properties: {
+        artist: {
+            $ref: '#/definitions/model.Artist'
+        },
         bpm: {
             type: 'integer'
         },
@@ -12,17 +15,32 @@ export const PerformanceSchema = {
         createdAt: {
             type: 'string'
         },
+        duration: {
+            type: 'integer'
+        },
+        genres: {
+            type: 'array',
+            items: {
+                $ref: '#/definitions/model.Genre'
+            }
+        },
         id: {
             type: 'string'
         },
-        name: {
-            type: 'string'
+        meter: {
+            $ref: '#/definitions/model.Meter'
+        },
+        released: {
+            type: 'integer'
         },
         resources: {
             type: 'array',
             items: {
                 $ref: '#/definitions/Resource'
             }
+        },
+        titel: {
+            type: 'string'
         },
         updatedAt: {
             type: 'string'
@@ -66,7 +84,7 @@ export const UserRoleSchema = {
         id: {
             type: 'string'
         },
-        name: {
+        titel: {
             type: 'string'
         },
         updatedAt: {
@@ -79,6 +97,60 @@ export const main_ErrorResponseSchema = {
     type: 'object',
     properties: {
         error: {
+            type: 'string'
+        }
+    }
+} as const;
+
+export const model_ArtistSchema = {
+    type: 'object',
+    properties: {
+        createdAt: {
+            type: 'string'
+        },
+        id: {
+            type: 'string'
+        },
+        titel: {
+            type: 'string'
+        },
+        updatedAt: {
+            type: 'string'
+        }
+    }
+} as const;
+
+export const model_GenreSchema = {
+    type: 'object',
+    properties: {
+        createdAt: {
+            type: 'string'
+        },
+        id: {
+            type: 'string'
+        },
+        titel: {
+            type: 'string'
+        },
+        updatedAt: {
+            type: 'string'
+        }
+    }
+} as const;
+
+export const model_MeterSchema = {
+    type: 'object',
+    properties: {
+        createdAt: {
+            type: 'string'
+        },
+        id: {
+            type: 'string'
+        },
+        titel: {
+            type: 'string'
+        },
+        updatedAt: {
             type: 'string'
         }
     }

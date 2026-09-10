@@ -6,6 +6,7 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "expo-router/react-navigation";
+import { Platform } from 'react-native';
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { useColorScheme } from "react-native";
@@ -43,6 +44,7 @@ export default function RootLayout() {
     const unlockScreenOerientation = async () => {
       await ScreenOrientation.unlockAsync()
     }
+    if (Platform.OS === 'web') return;
     unlockScreenOerientation()
   }, [])
 

@@ -7,5 +7,5 @@ type User struct {
 
 type UserRole struct {
 	BaseModel
-	Name string `json:"name" gorm:"not null;unique"`
+	Titel string `json:"titel" gorm:"not null;unique"`
 } //	@name	UserRole

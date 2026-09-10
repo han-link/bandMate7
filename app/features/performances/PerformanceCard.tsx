@@ -28,7 +28,7 @@ export function PerformanceCard({ performance: p }: PerformanceCardProps) {
       onPress={() => router.navigate(`/resource/${fistPdf[0]?.id}`)}
     >
       <Card.Header p="$4">
-        <Paragraph>{p.name}</Paragraph>
+        <Paragraph>{p.titel}</Paragraph>
       </Card.Header>
       <Card.Background items="center" unstyled={true}>
         <Image

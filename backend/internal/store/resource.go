@@ -45,16 +45,16 @@ func (s *ResourceStore) Create(
 	header *multipart.FileHeader,
 	performance *model.Performance,
 	role *model.UserRole,
-) (error, *model.Resource) {
+) (*model.Resource, error) {
 	buf := make([]byte, 512)
 	n, err := file.Read(buf)
 	if err != nil && err != io.EOF {
-		return err, nil
+		return nil, err
 	}
 	contentType := http.DetectContentType(buf[:n])
 
 	if _, err := file.Seek(0, io.SeekStart); err != nil {
-		return err, nil
+		return nil, err
 	}
 
 	resource := &model.Resource{
@@ -73,7 +73,7 @@ func (s *ResourceStore) Create(
 	for version := 1; ; version++ {
 		exists, err := s.objectExists(ctx, objectKey)
 		if err != nil {
-			return err, nil
+			return nil, err
 		}
 		if !exists {
 			break
@@ -86,27 +86,27 @@ func (s *ResourceStore) Create(
 		Create(resource).
 		Error
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
 	err = s.db.WithContext(ctx).
 		Preload("Resources").
 		First(performance).
 		Error
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
 
 	if _, err := s.minioClient.PutObject(ctx, s.bucket, objectKey, file, header.Size, minio.PutObjectOptions{
 		ContentType: contentType,
 	}); err != nil {
-		return err, nil
+		return nil, err
 	}
 
 	if err := file.Close(); err != nil {
-		return err, nil
+		return nil, err
 	}
 
-	return nil, resource
+	return resource, nil
 }
 
 func (s *ResourceStore) Delete(ctx context.Context, resource model.Resource) error {
@@ -152,7 +152,7 @@ func (s *ResourceStore) Open(ctx context.Context, resource *model.Resource) (*Re
 
 	stat, err := obj.Stat()
 	if err != nil {
-		obj.Close()
+		_ = obj.Close()
 		if minio.ToErrorResponse(err).StatusCode == http.StatusNotFound {
 			return nil, ErrNotFound
 		}
