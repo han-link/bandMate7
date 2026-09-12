@@ -8,8 +8,6 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
-	"os"
-	"path"
 	"strings"
 	"time"
 
@@ -21,7 +19,6 @@ import (
 
 type ResourceStore struct {
 	db           *gorm.DB
-	resourceDir  string
 	garageClient *garage.APIClient
 	garageCtx    context.Context
 	minioClient  *minio.Client
@@ -110,16 +107,7 @@ func (s *ResourceStore) Create(
 }
 
 func (s *ResourceStore) Delete(ctx context.Context, resource model.Resource) error {
-	err := os.Remove(path.Join(s.resourceDir, resource.Filename))
-	if err != nil {
-		return err
-	}
-	err = s.db.WithContext(ctx).
-		Delete(&resource).
-		Error
-	if err != nil {
-		return err
-	}
+	// ToDo: Implement Delete
 	return nil
 }
 

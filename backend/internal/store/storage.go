@@ -62,10 +62,10 @@ type Storage struct {
 	SetLists     SetLists
 }
 
-func NewStorage(db *gorm.DB, resourceDir string, garageClient *garage.APIClient, garageCtx context.Context, minioClient *minio.Client, bucket string) Storage {
+func NewStorage(db *gorm.DB, garageClient *garage.APIClient, garageCtx context.Context, minioClient *minio.Client, bucket string) Storage {
 	return Storage{
 		Performances: &PerformanceStore{db},
-		Resources:    &ResourceStore{db, resourceDir, garageClient, garageCtx, minioClient, bucket},
+		Resources:    &ResourceStore{db, garageClient, garageCtx, minioClient, bucket},
 		UserRoles:    &UserRoleStore{db},
 		Artists:      &ArtistStore{db},
 		SetLists:     &SetlistStore{db},

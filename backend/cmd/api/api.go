@@ -22,10 +22,10 @@ type application struct {
 }
 
 type config struct {
-	addr        string
-	host        string
-	baseUrl     string
-	resourceDir string
+	addr    string
+	host    string
+	baseUrl string
+	debug   bool
 }
 
 func (app *application) mount() http.Handler {

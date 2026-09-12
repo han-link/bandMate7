@@ -23,15 +23,10 @@ const version = "0.0.1"
 
 // @description
 func main() {
-	rootDir := env.GetString("Resource_DIR", "No path provided")
-	if rootDir == "No path provided" {
-		log.Fatal("No resource path provided. Set env variable Resource_DIR")
-	}
-
 	cfg := config{
-		addr:        env.GetString("ADDR", ":8080"),
-		host:        env.GetString("HOST", "localhost"),
-		resourceDir: rootDir,
+		addr:  env.GetString("ADDR", ":8080"),
+		host:  env.GetString("HOST", "localhost"),
+		debug: env.GetBool("DEBUG", false),
 	}
 
 	cfg.baseUrl = "http://" + cfg.host + cfg.addr
@@ -100,7 +95,7 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	storage := store.NewStorage(database, cfg.resourceDir, client, ctx, minioClient, garageBucket)
+	storage := store.NewStorage(database, client, ctx, minioClient, garageBucket)
 
 	services := service.NewServices(&storage, cfg.baseUrl)
 
