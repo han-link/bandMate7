@@ -44,6 +44,7 @@ func (app *application) mount() http.Handler {
 	r.Use(app.requestLogger)
 
 	r.Route("/api/v1", func(r chi.Router) {
+		r.Get("/health", app.healthCheckHandler)
 		r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("doc.json")))
 		r.Route("/performances", func(r chi.Router) {
 			r.Post("/", app.createPerformanceHandler)

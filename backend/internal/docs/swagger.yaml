@@ -215,6 +215,19 @@ paths:
       summary: Creates a artist
       tags:
       - artists
+  /health:
+    get:
+      description: Healthcheck endpoint
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Healthcheck
+      tags:
+      - ops
   /performances:
     get:
       parameters:
