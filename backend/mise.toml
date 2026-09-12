@@ -9,6 +9,7 @@ golangci-lint = "2.13.2"
 [tasks.dev]
 description = "Start backend in dev mode"
 depends = ["//:backend-dependencies"]
+depends_post = ["//:backend-dependencies:stop"]
 run = "air"
 
 [tasks.test]
@@ -29,7 +30,10 @@ run = "swag fmt -d internal/docs"
 [tasks.fmt-doc-comments]
 run = "swag fmt -d ."
 
-
 [tasks.gen-docs]
 description = "Generate swagger docs"
 run = [{ task = "init-docs" }, { tasks = ["fmt-docs", "fmt-doc-comments"] }]
+
+[tasks.build-image]
+description = "Build docker image"
+run = "docker build -t bandMate7/backend ."
