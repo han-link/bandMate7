@@ -68,7 +68,15 @@ func main() {
 
 	logger.Info("Sugared logger constructed successfully")
 
-	database, err := db.New(false)
+	database, err := db.New(
+		cfg.debug,
+		env.GetString("DB_HOST", "localhost"),
+		env.GetString("DB_USER", "postgres"),
+		env.GetString("DB_PASSWORD", "postgres"),
+		env.GetString("DB_NAME", "band-organizer"),
+		env.GetInt("DB_PORT", 5432),
+		env.GetString("DB_SSL_MODE", "disable"),
+	)
 	if err != nil {
 		logger.Fatal(err)
 	}

@@ -2,6 +2,9 @@ package db
 
 import (
 	"bandMate7/internal/model"
+	"fmt"
+	"log"
+	_ "time/tzdata" // Fallback if timezone database is not present on host
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -9,13 +12,13 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func New(debug bool) (*gorm.DB, error) {
-	dsn := "host=localhost user=postgres password=postgres dbname=band-organizer port=5432 sslmode=disable TimeZone=Europe/Berlin"
-
+func New(debug bool, host string, user string, password string, dbName string, port int, sslMode string) (*gorm.DB, error) {
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s TimeZone=UTC", host, user, password, dbName, port, sslMode)
 	logLevel := logger.Error
 
 	if debug {
 		logLevel = logger.Info
+		log.Print(dsn)
 	}
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
