@@ -14,8 +14,11 @@ prek = "0.5.2"
 
 [tasks.backend-dependencies]
 description = "Start backend dependencies"
-run = "docker compose up -d"
+run = "docker compose -f dev.compose.yml up -d"
 
+[tasks."backend-dependencies:stop"]
+description = "Stop backend dependencies"
+run = "docker compose -f dev.compose.yml stop"
 
 [tasks.dev]
 description = "Start project"
