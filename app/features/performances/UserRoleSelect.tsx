@@ -14,8 +14,8 @@ export function UserRoleSelect({
 }: UserRoleSelectProps) {
   const userRolesQuery = useQuery(getUserRolesOptions());
   const items =
-    userRolesQuery.data?.map(({ id, name }) => ({
-      name: name || "",
+    userRolesQuery.data?.map(({ id, titel }) => ({
+      name: titel || "",
       value: id || "",
     })) ?? [];
   return (

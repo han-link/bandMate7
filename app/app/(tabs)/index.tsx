@@ -10,10 +10,10 @@ import { useState } from "react";
 
 export default function TabOneScreen() {
   const router = useRouter();
-  const sortOptions = [{name: "Name", value: "name"}, {name: "Created", value: "created_at"}]
+  const sortOptions = [{name: "Titel", value: "titel"}, {name: "Created", value: "created_at"}]
   const [mode, setMode] = useState<ViewMode>("grid")
   const [desc, setDesc] = useState<boolean>(false)
-  const [orderBy, setOrderBy] = useState<SelectValue>("name")
+  const [orderBy, setOrderBy] = useState<SelectValue>("titel")
   return (
     <>
       <H1>Performances</H1>
