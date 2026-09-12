@@ -14,6 +14,23 @@ description = "Start frontend"
 depends = ["emulator"]
 run = "npm run android"
 
+[tasks."dev:web"]
+description = "Start frontend"
+run = "npm run web"
+
 [tasks.gen-client]
 description = "Generate client"
 run = "npm run generate-client"
+
+[tasks.build-image]
+description = "Build docker image"
+run = "docker build -t bandMate7/web ."
+
+[tasks."build:web"]
+description = "Build web app"
+run = "npx expo export --platform web"
+
+[tasks."preview:web"]
+description = "Preview the web app"
+depends = ["//app:build:web"]
+run = "npx serve dist"
