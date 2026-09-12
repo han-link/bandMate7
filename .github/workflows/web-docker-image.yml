@@ -1,11 +1,11 @@
-name: Publish backend Docker image
+name: Publish web Docker image
 
 on:
   push:
     branches: [ "master" ]
     paths:
-      - 'backend/**'
-      - '.github/workflows/backend-docker-image.yml'
+      - 'app/**'
+      - '.github/workflows/web-docker-image.yml'
   workflow_dispatch:
 
 jobs:
@@ -32,7 +32,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 #v6.2.0
       with:
-        images: ghcr.io/${{ github.repository }}/backend
+        images: ghcr.io/${{ github.repository }}/web
         tags: |
           type=raw,value=latest
 
@@ -40,7 +40,7 @@ jobs:
       id: push
       uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a #v7.3.0
       with:
-        context: ./backend
+        context: ./app
         push: true
         provenance: false
         sbom: false
