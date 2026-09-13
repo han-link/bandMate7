@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { useTabTrigger } from "expo-router/ui";
 import { SymbolView } from "expo-symbols";
 import type { ComponentProps } from "react";
 import {
@@ -6,43 +6,34 @@ import {
   View,
   createStyledContext,
   styled,
-  useMedia,
   useTheme,
   withStaticProperties,
 } from "tamagui";
 
 const TabBarContext = createStyledContext<{
-  layout: "sidebar" | "bottom";
   focused: boolean;
 }>({
-  layout: "bottom",
   focused: false,
 });
 
 const TabBarFrame = styled(View, {
   name: "TabBar",
   context: TabBarContext,
+  flexDirection: "row",
+  pt: "$2",
+  px: "$2",
+  borderTopWidth: 1,
+  borderColor: "$borderColor",
 
-  variants: {
-    layout: {
-      sidebar: {
-        width: "$9",
-        px: "$2",
-        py: "$6",
-        gap: "$2",
-        borderRightWidth: 1,
-        borderColor: "$borderColor",
-        items: "center",
-      },
-      bottom: {
-        flexDirection: "row",
-        pt: "$2",
-        px: "$2",
-        borderTopWidth: 1,
-        borderColor: "$borderColor",
-      },
-    },
-  } as const,
+  $md: {
+    flexDirection: "column",
+    width: "$9",
+    py: "$6",
+    gap: "$2",
+    borderTopWidth: 0,
+    borderRightWidth: 1,
+    items: "center",
+  },
 });
 
 const TabBarItem = styled(View, {
@@ -53,20 +44,23 @@ const TabBarItem = styled(View, {
   gap: "$2",
   cursor: "pointer",
   pressStyle: { opacity: 0.6 },
+  grow: 1,
+  flexBasis: 0,
+  py: "$2",
+  rounded: "$3",
+
+  $md: {
+    grow: 0,
+    flexBasis: "auto",
+    py: 0,
+    width: "$6",
+    height: "$6",
+    rounded: "$2",
+  },
 
   variants: {
-    layout: {
-      sidebar: { rounded: "$2" },
-      bottom: { flex: 1, py: "$2", rounded: "$3" },
-    },
     focused: {
       true: { bg: "$highlight1" },
-    },
-    size: {
-      "...size": (val, { tokens }) => ({
-        width: tokens.size[val],
-        height: tokens.size[val],
-      }),
     },
   } as const,
 });
@@ -112,54 +106,37 @@ const NAV_ITEMS: NavItem[] = [
   },
 ];
 
-type TamaguiTabBarProps = Parameters<
-  NonNullable<ComponentProps<typeof Tabs>["tabBar"]>
->[0];
-
-export function TamaguiTabBar({ state, navigation }: TamaguiTabBarProps) {
-  const media = useMedia();
+function TabBarTrigger({ item }: { item: NavItem }) {
   const theme = useTheme();
-  const layout = media.md ? "sidebar" : "bottom";
+  const { trigger, triggerProps } = useTabTrigger({ name: item.route });
+  if (!trigger) return null; // route not registered - skip it
+
+  const { isFocused, onPress, onLongPress } = triggerProps;
 
   return (
-    <TabBar layout={layout}>
-      {NAV_ITEMS.map((item) => {
-        const index = state.routes.findIndex((r) => r.name === item.route);
-        if (index === -1) return null; // route not registered — skip it
+    <TabBar.Item
+      focused={isFocused}
+      onPress={onPress}
+      onLongPress={onLongPress}
+      role="button"
+      aria-selected={isFocused}
+    >
+      <SymbolView
+        name={item.symbol}
+        size={26}
+        tintColor={isFocused ? theme.color.val : theme.color11.val}
+      />
+      <TabBar.Label>{item.label}</TabBar.Label>
+    </TabBar.Item>
+  );
+}
 
-        const route = state.routes[index];
-        const isFocused = state.index === index;
-
-        const onPress = () => {
-          const event = navigation.emit({
-            type: "tabPress",
-            target: route.key,
-            canPreventDefault: true,
-          });
-
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name, route.params);
-          }
-        };
-
-        return (
-          <TabBar.Item
-            key={item.route}
-            focused={isFocused}
-            size={layout === "sidebar" ? "$6" : undefined}
-            onPress={onPress}
-            role="button"
-            aria-selected={isFocused}
-          >
-            <SymbolView
-              name={item.symbol}
-              size={26}
-              tintColor={isFocused ? theme.color.val : theme.color11.val}
-            />
-            <TabBar.Label>{item.label}</TabBar.Label>
-          </TabBar.Item>
-        );
-      })}
+export function TamaguiTabBar() {
+  return (
+    <TabBar>
+      {NAV_ITEMS.map((item) => (
+        <TabBarTrigger key={item.route} item={item} />
+      ))}
     </TabBar>
   );
 }
