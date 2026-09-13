@@ -26,8 +26,12 @@ run = "npm run generate-client"
 description = "Build docker image"
 run = "docker build -t bandMate7/web ."
 
+[tasks."tamagui:gen"]
+run = "npx tamagui generate"
+
 [tasks."build:web"]
 description = "Build web app"
+depends = ["//app:tamagui:gen"]
 run = "npx expo export --platform web"
 
 [tasks."preview:web"]

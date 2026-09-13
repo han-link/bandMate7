@@ -44,6 +44,7 @@
   "devDependencies": {
     "@hey-api/openapi-ts": "^0.99.0",
     "@tamagui/babel-plugin": "^2.4.0",
+    "@tamagui/cli": "^2.7.7",
     "@tamagui/metro-plugin": "^2.4.0",
     "@types/node": "^26.1.1",
     "@types/react": "~19.2.2",
