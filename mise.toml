@@ -10,6 +10,7 @@ lockfile = true
 
 [tools]
 docker-cli = "29.6"
+helm = "4.3.0"
 prek = "0.5.2"
 
 [tasks.backend-dependencies]

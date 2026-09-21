@@ -12,7 +12,7 @@ hooks = [
     { id = "end-of-file-fixer" },
     { id = "check-added-large-files" },
     { id = "check-merge-conflict" },
-    { id = "check-yaml" },
+    { id = "check-yaml", exclude = "^helm-bandMate7/templates/" },
     { id = "check-json" },
     { id = "detect-private-key" },
     { id = "mixed-line-ending" },
