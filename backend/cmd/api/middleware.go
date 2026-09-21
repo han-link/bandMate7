@@ -59,7 +59,7 @@ func (app *application) resourceContextMiddleware(next http.Handler) http.Handle
 			}
 			return
 		}
-		resource.SetUrl(app.config.baseUrl)
+		resource.SetUrl(app.config.baseURL.String())
 		ctx = context.WithValue(ctx, resourceCtx, resource)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

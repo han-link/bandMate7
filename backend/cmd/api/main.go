@@ -7,8 +7,12 @@ import (
 	"bandMate7/internal/store"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
+	"net"
+	"net/url"
 	"os"
+	"strings"
 
 	garage "git.deuxfleurs.fr/garage-sdk/garage-admin-sdk-golang"
 	"github.com/minio/minio-go/v7"
@@ -16,7 +20,38 @@ import (
 	"go.uber.org/zap"
 )
 
+func resolveBaseURL(raw, addr string, environment string) (*url.URL, error) {
+	dev := environment == EnvDevelopment
+	if raw == "" {
+		if !dev {
+			return nil, fmt.Errorf("PUBLIC_URL must be set when ENV not %s", EnvDevelopment)
+		}
+		raw = "http://localhost"
+	}
+	if !strings.Contains(raw, "://") {
+		raw = "http://" + raw
+	}
+	u, err := url.Parse(raw)
+	if err != nil {
+		return nil, fmt.Errorf("PUBLIC_URL %q: %w", raw, err)
+	}
+	if u.Scheme != "http" && u.Scheme != "https" {
+		return nil, fmt.Errorf("PUBLIC_URL %q: scheme must be http or https", raw)
+	}
+	if u.Hostname() == "" {
+		return nil, fmt.Errorf("PUBLIC_URL %q: missing host", raw)
+	}
+	if dev && u.Port() == "" {
+		if _, port, err := net.SplitHostPort(addr); err == nil && port != "" {
+			u.Host = net.JoinHostPort(u.Hostname(), port)
+		}
+	}
+	u.Path = strings.TrimSuffix(u.Path, "/")
+	return u, nil
+}
+
 const version = "0.0.1"
+const EnvDevelopment = "development"
 
 //	@title			BandMate7 API
 //	@description	API for bandMate7, an expense manager
@@ -25,15 +60,14 @@ const version = "0.0.1"
 func main() {
 	cfg := config{
 		addr:  env.GetString("ADDR", ":8080"),
-		host:  env.GetString("HOST", "localhost"),
 		debug: env.GetBool("DEBUG", false),
 		env:   env.GetString("ENV", ""),
 	}
-	baseUrl := cfg.host
-	if cfg.env == "development" {
-		baseUrl += cfg.addr
+	u, err := resolveBaseURL(env.GetString("PUBLIC_URL", ""), cfg.addr, cfg.env)
+	if err != nil {
+		log.Fatal(err)
 	}
-	cfg.baseUrl = baseUrl
+	cfg.baseURL = u
 
 	logDir := "./logs"
 	if err := os.MkdirAll(logDir, os.ModePerm); err != nil {
@@ -109,7 +143,7 @@ func main() {
 
 	storage := store.NewStorage(database, client, ctx, minioClient, garageBucket)
 
-	services := service.NewServices(&storage, cfg.baseUrl)
+	services := service.NewServices(&storage, cfg.baseURL.String())
 
 	app := &application{
 		config:  cfg,

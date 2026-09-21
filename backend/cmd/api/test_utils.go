@@ -16,7 +16,7 @@ func newTestApplication(t *testing.T, cfg config) *application {
 
 	logger := zap.NewNop().Sugar()
 	mockStore := store.NewMockStore()
-	services := service.NewServices(&mockStore, cfg.baseUrl)
+	services := service.NewServices(&mockStore, cfg.baseURL.String())
 
 	return &application{
 		logger:  logger,

@@ -6,6 +6,7 @@ import (
 	"bandMate7/internal/store"
 	"fmt"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -23,8 +24,7 @@ type application struct {
 
 type config struct {
 	addr    string
-	host    string
-	baseUrl string
+	baseURL *url.URL
 	debug   bool
 	env     string
 }
@@ -90,7 +90,7 @@ func (app *application) mount() http.Handler {
 
 func (app *application) run(mux http.Handler) error {
 	docs.SwaggerInfo.Version = version
-	docs.SwaggerInfo.Host = app.config.baseUrl
+	docs.SwaggerInfo.Host = app.config.baseURL.Host
 	docs.SwaggerInfo.BasePath = "/api/v1"
 
 	srv := &http.Server{
@@ -101,8 +101,8 @@ func (app *application) run(mux http.Handler) error {
 		IdleTimeout:  time.Minute,
 	}
 
-	app.logger.Infow(fmt.Sprintf("Server has started at %s", app.config.baseUrl))
-	app.logger.Infow(fmt.Sprintf("Docs are available at %s%s", app.config.baseUrl, "/api/v1/swagger/"))
+	app.logger.Infow("config", "addr", app.config.addr, "baseURL", app.config.baseURL.String(), "env", app.config.env)
+	app.logger.Infow(fmt.Sprintf("Docs are available at %s", app.config.baseURL.JoinPath("/api/v1/swagger/").String()))
 
 	return srv.ListenAndServe()
 }
