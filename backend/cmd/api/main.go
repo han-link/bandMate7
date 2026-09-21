@@ -27,9 +27,13 @@ func main() {
 		addr:  env.GetString("ADDR", ":8080"),
 		host:  env.GetString("HOST", "localhost"),
 		debug: env.GetBool("DEBUG", false),
+		env:   env.GetString("ENV", ""),
 	}
-
-	cfg.baseUrl = "http://" + cfg.host + cfg.addr
+	baseUrl := cfg.host
+	if cfg.env == "development" {
+		baseUrl += cfg.addr
+	}
+	cfg.baseUrl = baseUrl
 
 	logDir := "./logs"
 	if err := os.MkdirAll(logDir, os.ModePerm); err != nil {
