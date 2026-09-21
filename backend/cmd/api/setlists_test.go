@@ -2,12 +2,19 @@ package main
 
 import (
 	"bytes"
+	"log"
 	"net/http"
 	"testing"
 )
 
 func TestGetSetlist(t *testing.T) {
-	cfg := config{}
+	u, err := resolveBaseURL("localhost", ":8080", EnvDevelopment)
+	if err != nil {
+		log.Fatal(err)
+	}
+	cfg := config{
+		baseURL: u,
+	}
 	app := newTestApplication(t, cfg)
 	mux := app.mount()
 
