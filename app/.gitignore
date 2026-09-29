@@ -43,3 +43,6 @@ tamagui.generated.css
 # generated native folders
 /ios
 /android
+
+# generated client code
+client/

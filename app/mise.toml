@@ -11,11 +11,12 @@ run = "ANDROID_EMULATOR_DEVICE=$ANDROID_EMULATOR_DEVICE sh ./scripts/start-andro
 
 [tasks.dev]
 description = "Start frontend"
-depends = ["emulator"]
+depends = ["emulator", "gen-client"]
 run = "npm run android"
 
 [tasks."dev:web"]
 description = "Start frontend"
+depends = ["gen-client"]
 run = "npm run web"
 
 [tasks.gen-client]
