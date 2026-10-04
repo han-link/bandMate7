@@ -60,15 +60,11 @@ web:
       emptyDir: {}
     - name: tmp
       emptyDir: {}
-    - name: confd
-      emptyDir: {}
   extraVolumeMounts:
     - name: cache
       mountPath: /var/cache/nginx
     - name: tmp
       mountPath: /tmp
-    - name: confd
-      mountPath: /etc/nginx/conf.d
   resources:
     requests:
       cpu: 20m
