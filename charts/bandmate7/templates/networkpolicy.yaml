@@ -1,0 +1,61 @@
+{{- if .Values.networkPolicy.enabled }}
+{{- if .Values.web.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "bandmate7.fullname" . }}-web
+  labels:
+    {{- include "bandmate7.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "bandmate7.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: web
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Values.networkPolicy.ingressControllerNamespace }}
+        - podSelector:
+            matchLabels:
+              {{- include "bandmate7.selectorLabels" . | nindent 14 }}
+              app.kubernetes.io/component: test
+      ports:
+        - port: http
+          protocol: TCP
+---
+{{- end }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "bandmate7.fullname" . }}-backend
+  labels:
+    {{- include "bandmate7.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "bandmate7.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: backend
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Values.networkPolicy.ingressControllerNamespace }}
+        {{- if .Values.web.enabled }}
+        - podSelector:
+            matchLabels:
+              {{- include "bandmate7.selectorLabels" . | nindent 14 }}
+              app.kubernetes.io/component: web
+        {{- end }}
+        - podSelector:
+            matchLabels:
+              {{- include "bandmate7.selectorLabels" . | nindent 14 }}
+              app.kubernetes.io/component: test
+      ports:
+        - port: http
+          protocol: TCP
+{{- end }}

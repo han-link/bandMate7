@@ -1,0 +1,18 @@
+{{- include "bandmate7.validate" . -}}
+{{- $fullname := include "bandmate7.fullname" . -}}
+{{- if .Values.ingress.enabled }}
+{{- $origin := printf "%s://%s" (include "bandmate7.scheme" .) .Values.ingress.host }}
+{{- if .Values.web.enabled }}
+Frontend  {{ $origin }}
+{{- end }}
+API       {{ $origin }}{{ .Values.ingress.apiPrefix }}/v1
+{{- else }}
+{{- if .Values.web.enabled }}
+kubectl -n {{ .Release.Namespace }} port-forward svc/{{ $fullname }}-web 8080:80
+{{- end }}
+kubectl -n {{ .Release.Namespace }} port-forward svc/{{ $fullname }}-backend 8081:{{ .Values.backend.port }}
+{{- end }}
+{{- if and (not .Values.backend.env) (not .Values.backend.envFrom) }}
+
+WARNING  backend.env and backend.envFrom are empty - no database configured.
+{{- end }}

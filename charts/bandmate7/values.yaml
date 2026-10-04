@@ -1,0 +1,107 @@
+nameOverride: ""
+fullnameOverride: ""
+
+imagePullSecrets: []
+
+backend:
+  image:
+    repository: ghcr.io/han-link/bandmate7/backend
+    tag: ""
+    digest: ""
+    pullPolicy: Always
+  replicas: 1
+  port: 8080
+  publicUrl: ""
+  healthPath: /api/v1/health
+  livenessPath: ""
+  env: []
+  envFrom: []
+  podLabels: {}
+  podAnnotations: {}
+  extraVolumes: []
+  extraVolumeMounts: []
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      memory: 512Mi
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop: ["ALL"]
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+web:
+  enabled: true
+  image:
+    repository: ghcr.io/han-link/bandmate7/web
+    tag: ""
+    digest: ""
+    pullPolicy: Always
+  replicas: 1
+  port: 8080
+  healthPath: /healthz
+  env: []
+  envFrom: []
+  podLabels: {}
+  podAnnotations: {}
+  extraVolumes:
+    - name: cache
+      emptyDir: {}
+    - name: tmp
+      emptyDir: {}
+    - name: confd
+      emptyDir: {}
+  extraVolumeMounts:
+    - name: cache
+      mountPath: /var/cache/nginx
+    - name: tmp
+      mountPath: /tmp
+    - name: confd
+      mountPath: /etc/nginx/conf.d
+  resources:
+    requests:
+      cpu: 20m
+      memory: 64Mi
+    limits:
+      memory: 256Mi
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 101
+    runAsGroup: 101
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop: ["ALL"]
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+ingress:
+  enabled: false
+  className: ""
+  host: ""
+  apiPrefix: /api
+  annotations: {}
+  tlsEnabled: false
+  tls: []
+
+tests:
+  image: busybox:1.37
+
+networkPolicy:
+  enabled: false
+  ingressControllerNamespace: kube-system

@@ -1,0 +1,15 @@
+apiVersion: v2
+name: bandmate7
+description: bandmate7 web frontend and backend API
+
+type: application
+
+version: 0.1.0
+
+appVersion: "latest"
+
+kubeVersion: ">=1.21.0-0"
+
+home: https://github.com/han-link/bandmate7
+sources:
+  - https://github.com/han-link/bandmate7
