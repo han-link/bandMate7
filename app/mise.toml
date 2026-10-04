@@ -25,7 +25,7 @@ run = "npm run generate-client"
 
 [tasks.build-image]
 description = "Build docker image"
-run = "docker build -t bandMate7/web ."
+run = "docker build -t bandmate7/web --build-context backend=../backend ."
 
 [tasks."tamagui:gen"]
 run = "npx tamagui generate"

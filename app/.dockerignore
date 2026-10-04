@@ -5,3 +5,12 @@ adnroid
 .vscode
 dist
 ios
+.git
+.gitignore
+Dockerfile
+.dockerignore
+*.log
+.env
+.env.*
+coverage
+.idea
