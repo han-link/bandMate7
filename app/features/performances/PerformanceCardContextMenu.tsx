@@ -49,6 +49,10 @@ export function PerformanceCardContextMenu({ performance: p, children }: Perform
                         destructive>
                         <ContextMenu.ItemTitle color="red">Delete {p.titel}</ContextMenu.ItemTitle>
                     </ContextMenu.Item>
+                    <ContextMenu.Item
+                        disabled={true}>
+                        <ContextMenu.ItemTitle>Edit</ContextMenu.ItemTitle>
+                    </ContextMenu.Item>
                 </ContextMenu.Content>
             </ContextMenu.Portal>
         </ContextMenu >
