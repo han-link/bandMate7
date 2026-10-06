@@ -14,5 +14,8 @@ type Resource struct {
 } //	@name	Resource
 
 func (r *Resource) SetUrl(baseUrl string) {
-	r.Url = baseUrl + "/api/v1/resources/" + r.ID.String()
+	if r == nil {
+		return
+	}
+	r.Url = baseUrl + "/resources/" + r.ID.String()
 }

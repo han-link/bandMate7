@@ -67,20 +67,6 @@ func (s *PerformanceService) Create(ctx context.Context, input CreatePerformance
 	return performance, nil
 }
 
-func (s *PerformanceService) populateResourceUrls(p *model.Performance) {
-	if p == nil {
-		return
-	}
-
-	if p.Cover != nil {
-		p.Cover.SetUrl(s.baseUrl)
-	}
-
-	for i := range p.Resources {
-		p.Resources[i].SetUrl(s.baseUrl)
-	}
-}
-
 func (s *PerformanceService) GetAll(ctx context.Context, r *http.Request) (*[]model.Performance, error) {
 	// Set defaults
 	pr := PaginatedRequest{
@@ -99,7 +85,7 @@ func (s *PerformanceService) GetAll(ctx context.Context, r *http.Request) (*[]mo
 	performances, err := s.store.Performances.GetAll(ctx, pq)
 
 	for i := range performances {
-		s.populateResourceUrls(&performances[i])
+		performances[i].SetUrls(s.baseUrl)
 	}
 
 	return &performances, err

@@ -32,6 +32,7 @@ func (app *application) performanceContextMiddleware(next http.Handler) http.Han
 			}
 			return
 		}
+		performance.SetUrls(app.config.baseURL.String())
 		ctx = context.WithValue(ctx, performanceCtx, performance)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

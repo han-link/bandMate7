@@ -23,3 +23,15 @@ type Performance struct {
 	Collections  []Collection         `json:"-" gorm:"many2many:collections_performances"`
 	Genres       []Genre              `json:"genres" gorm:"many2many:genres_performances"`
 } //	@name	Performance
+
+func (p *Performance) SetUrls(baseUrl string) {
+	if p == nil {
+		return
+	}
+	if p.Cover != nil {
+		p.Cover.SetUrl(baseUrl)
+	}
+	for i := range p.Resources {
+		p.Resources[i].SetUrl(baseUrl)
+	}
+}
