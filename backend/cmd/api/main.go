@@ -83,7 +83,9 @@ func main() {
 	  "encoderConfig": {
 	    "messageKey": "message",
 	    "levelKey": "level",
-	    "levelEncoder": "lowercase"
+	    "levelEncoder": "lowercase",
+		"timeKey": "ts",
+		"timeEncoder": "iso8601"
 	  }
 	}`)
 
