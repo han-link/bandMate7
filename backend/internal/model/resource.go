@@ -17,5 +17,5 @@ func (r *Resource) SetUrl(baseUrl string) {
 	if r == nil {
 		return
 	}
-	r.Url = baseUrl + "/resources/" + r.ID.String()
+	r.Url = baseUrl + "/api/v1/resources/" + r.ID.String()
 }
