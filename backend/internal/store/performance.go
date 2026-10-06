@@ -5,7 +5,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -55,12 +54,6 @@ func (s *PerformanceStore) GetByID(ctx context.Context, id uuid.UUID) (*model.Pe
 }
 
 func (s *PerformanceStore) Delete(ctx context.Context, performance *model.Performance) error {
-	for _, resource := range performance.Resources {
-		err := os.Remove("resources/" + resource.Filename)
-		if err != nil {
-			return err
-		}
-	}
 	err := s.db.WithContext(ctx).
 		Delete(performance).
 		Error

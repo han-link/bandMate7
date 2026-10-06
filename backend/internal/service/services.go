@@ -10,6 +10,7 @@ import (
 type Performances interface {
 	Create(ctx context.Context, input CreatePerformanceRequest) (*model.Performance, error)
 	GetAll(ctx context.Context, r *http.Request) (*[]model.Performance, error)
+	Delete(ctx context.Context, p *model.Performance) error
 }
 
 type Setlists interface {

@@ -107,7 +107,17 @@ func (s *ResourceStore) Create(
 }
 
 func (s *ResourceStore) Delete(ctx context.Context, resource model.Resource) error {
-	// ToDo: Implement Delete
+	objectKey := resource.Filename
+	exists, err := s.objectExists(ctx, objectKey)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		return ErrNotFound
+	}
+	if err := s.minioClient.RemoveObject(ctx, s.bucket, objectKey, minio.RemoveObjectOptions{}); err != nil {
+		return err
+	}
 	return nil
 }
 

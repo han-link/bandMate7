@@ -104,3 +104,15 @@ func (s *PerformanceService) GetAll(ctx context.Context, r *http.Request) (*[]mo
 
 	return &performances, err
 }
+
+func (s *PerformanceService) Delete(ctx context.Context, p *model.Performance) error {
+	for _, r := range p.Resources {
+		if err := s.store.Resources.Delete(ctx, r); err != nil {
+			return err
+		}
+	}
+	if err := s.store.Performances.Delete(ctx, p); err != nil {
+		return err
+	}
+	return nil
+}

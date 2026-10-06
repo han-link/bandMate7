@@ -29,7 +29,7 @@ func (app *application) deletePerformancesHandler(w http.ResponseWriter, r *http
 	performance := getPerformanceFromContext(r)
 	ctx := r.Context()
 
-	err := app.store.Performances.Delete(ctx, performance)
+	err := app.service.Performances.Delete(ctx, performance)
 
 	if err != nil {
 		app.internalServerError(w, r, err)
