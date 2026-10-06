@@ -22,7 +22,7 @@ run = "go test ./... -coverprofile=cover.out && go tool cover -html=cover.out"
 
 [tasks.init-docs]
 description = ""
-run = "swag init -g ./api/main.go -d cmd,internal -o internal/docs"
+run = "swag init --requiredByDefault -g ./api/main.go -d cmd,internal -o internal/docs"
 
 [tasks.fmt-docs]
 run = "swag fmt -d internal/docs"

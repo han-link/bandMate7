@@ -5,18 +5,18 @@ import "github.com/google/uuid"
 type Performance struct {
 	BaseModel
 	Titel    string `json:"titel"`
-	Bpm      *int   `json:"bpm"`
-	Released *int   `json:"released"`
-	Duration *int   `json:"duration"`
+	Bpm      *int   `json:"bpm" extensions:"x-nullable"`
+	Released *int   `json:"released" extensions:"nullable"`
+	Duration *int   `json:"duration" extensions:"x-nullable"`
 
 	CoverID *uuid.UUID `json:"-"`
-	Cover   *Resource  `json:"cover" gorm:"foreignKey:CoverID;references:ID;-:migration"`
+	Cover   *Resource  `json:"cover" gorm:"foreignKey:CoverID;references:ID;-:migration" extensions:"x-nullable"`
 
 	ArtistID *uuid.UUID `json:"-"`
-	Artist   *Artist    `json:"artist"`
+	Artist   *Artist    `json:"artist" extensions:"x-nullable"`
 
 	MeterID *uuid.UUID `json:"-"`
-	Meter   *Meter     `json:"meter"`
+	Meter   *Meter     `json:"meter" extensions:"x-nullable"`
 
 	Resources    []Resource           `json:"resources" gorm:"foreignKey:PerformanceID;constraint:OnDelete:CASCADE;"`
 	SetlistItems []SetlistPerformance `json:"-" gorm:"foreignKey:PerformanceID"`

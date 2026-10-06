@@ -704,21 +704,47 @@ const docTemplate = `{
     "definitions": {
         "Performance": {
             "type": "object",
+            "required": [
+                "artist",
+                "bpm",
+                "cover",
+                "createdAt",
+                "duration",
+                "genres",
+                "id",
+                "meter",
+                "released",
+                "resources",
+                "titel",
+                "updatedAt"
+            ],
             "properties": {
                 "artist": {
-                    "$ref": "#/definitions/model.Artist"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.Artist"
+                        }
+                    ],
+                    "x-nullable": true
                 },
                 "bpm": {
-                    "type": "integer"
+                    "type": "integer",
+                    "x-nullable": true
                 },
                 "cover": {
-                    "$ref": "#/definitions/Resource"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/Resource"
+                        }
+                    ],
+                    "x-nullable": true
                 },
                 "createdAt": {
                     "type": "string"
                 },
                 "duration": {
-                    "type": "integer"
+                    "type": "integer",
+                    "x-nullable": true
                 },
                 "genres": {
                     "type": "array",
@@ -730,7 +756,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "meter": {
-                    "$ref": "#/definitions/model.Meter"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.Meter"
+                        }
+                    ],
+                    "x-nullable": true
                 },
                 "released": {
                     "type": "integer"
@@ -751,6 +782,15 @@ const docTemplate = `{
         },
         "Resource": {
             "type": "object",
+            "required": [
+                "createdAt",
+                "filename",
+                "id",
+                "type",
+                "updatedAt",
+                "url",
+                "user_role"
+            ],
             "properties": {
                 "createdAt": {
                     "type": "string"
@@ -771,12 +811,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_role": {
-                    "$ref": "#/definitions/UserRole"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/UserRole"
+                        }
+                    ],
+                    "x-nullable": true
                 }
             }
         },
         "UserRole": {
             "type": "object",
+            "required": [
+                "createdAt",
+                "id",
+                "titel",
+                "updatedAt"
+            ],
             "properties": {
                 "createdAt": {
                     "type": "string"
@@ -806,6 +857,7 @@ const docTemplate = `{
         "main.CreateSetlistPayload": {
             "type": "object",
             "required": [
+                "performanceIds",
                 "title"
             ],
             "properties": {
@@ -822,6 +874,9 @@ const docTemplate = `{
         },
         "main.ErrorResponse": {
             "type": "object",
+            "required": [
+                "error"
+            ],
             "properties": {
                 "error": {
                     "type": "string"
@@ -830,6 +885,12 @@ const docTemplate = `{
         },
         "model.Artist": {
             "type": "object",
+            "required": [
+                "createdAt",
+                "id",
+                "titel",
+                "updatedAt"
+            ],
             "properties": {
                 "createdAt": {
                     "type": "string"
@@ -847,6 +908,12 @@ const docTemplate = `{
         },
         "model.Genre": {
             "type": "object",
+            "required": [
+                "createdAt",
+                "id",
+                "titel",
+                "updatedAt"
+            ],
             "properties": {
                 "createdAt": {
                     "type": "string"
@@ -864,6 +931,12 @@ const docTemplate = `{
         },
         "model.Meter": {
             "type": "object",
+            "required": [
+                "createdAt",
+                "id",
+                "titel",
+                "updatedAt"
+            ],
             "properties": {
                 "createdAt": {
                     "type": "string"
@@ -881,6 +954,13 @@ const docTemplate = `{
         },
         "model.Setlist": {
             "type": "object",
+            "required": [
+                "createdAt",
+                "id",
+                "items",
+                "titel",
+                "updatedAt"
+            ],
             "properties": {
                 "createdAt": {
                     "type": "string"
@@ -904,6 +984,12 @@ const docTemplate = `{
         },
         "model.SetlistPerformance": {
             "type": "object",
+            "required": [
+                "performance",
+                "performanceID",
+                "position",
+                "setlistID"
+            ],
             "properties": {
                 "createdAt": {
                     "type": "string"
@@ -924,6 +1010,10 @@ const docTemplate = `{
         },
         "service.ChangeOrderItem": {
             "type": "object",
+            "required": [
+                "id",
+                "position"
+            ],
             "properties": {
                 "id": {
                     "type": "string"
@@ -935,6 +1025,9 @@ const docTemplate = `{
         },
         "service.ChangeOrderPayload": {
             "type": "object",
+            "required": [
+                "items"
+            ],
             "properties": {
                 "items": {
                     "type": "array",
@@ -946,6 +1039,11 @@ const docTemplate = `{
         },
         "service.SelistWithoutPerformance": {
             "type": "object",
+            "required": [
+                "createdAt",
+                "id",
+                "updatedAt"
+            ],
             "properties": {
                 "createdAt": {
                     "type": "string"

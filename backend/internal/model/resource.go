@@ -6,7 +6,7 @@ type Resource struct {
 	BaseModel
 	Type          string     `json:"type" gorm:"not null"`
 	UserRoleID    *uuid.UUID `json:"-"`
-	UserRole      *UserRole  `json:"user_role"`
+	UserRole      *UserRole  `json:"user_role" extensions:"x-nullable"`
 	Filename      string     `json:"filename"`
 	SizeBytes     int64      `json:"-"`
 	PerformanceID uuid.UUID  `json:"-" gorm:"index;not null"`

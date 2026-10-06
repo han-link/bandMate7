@@ -694,21 +694,47 @@
     "definitions": {
         "Performance": {
             "type": "object",
+            "required": [
+                "artist",
+                "bpm",
+                "cover",
+                "createdAt",
+                "duration",
+                "genres",
+                "id",
+                "meter",
+                "released",
+                "resources",
+                "titel",
+                "updatedAt"
+            ],
             "properties": {
                 "artist": {
-                    "$ref": "#/definitions/model.Artist"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.Artist"
+                        }
+                    ],
+                    "x-nullable": true
                 },
                 "bpm": {
-                    "type": "integer"
+                    "type": "integer",
+                    "x-nullable": true
                 },
                 "cover": {
-                    "$ref": "#/definitions/Resource"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/Resource"
+                        }
+                    ],
+                    "x-nullable": true
                 },
                 "createdAt": {
                     "type": "string"
                 },
                 "duration": {
-                    "type": "integer"
+                    "type": "integer",
+                    "x-nullable": true
                 },
                 "genres": {
                     "type": "array",
@@ -720,7 +746,12 @@
                     "type": "string"
                 },
                 "meter": {
-                    "$ref": "#/definitions/model.Meter"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.Meter"
+                        }
+                    ],
+                    "x-nullable": true
                 },
                 "released": {
                     "type": "integer"
@@ -741,6 +772,15 @@
         },
         "Resource": {
             "type": "object",
+            "required": [
+                "createdAt",
+                "filename",
+                "id",
+                "type",
+                "updatedAt",
+                "url",
+                "user_role"
+            ],
             "properties": {
                 "createdAt": {
                     "type": "string"
@@ -761,12 +801,23 @@
                     "type": "string"
                 },
                 "user_role": {
-                    "$ref": "#/definitions/UserRole"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/UserRole"
+                        }
+                    ],
+                    "x-nullable": true
                 }
             }
         },
         "UserRole": {
             "type": "object",
+            "required": [
+                "createdAt",
+                "id",
+                "titel",
+                "updatedAt"
+            ],
             "properties": {
                 "createdAt": {
                     "type": "string"
@@ -796,6 +847,7 @@
         "main.CreateSetlistPayload": {
             "type": "object",
             "required": [
+                "performanceIds",
                 "title"
             ],
             "properties": {
@@ -812,6 +864,9 @@
         },
         "main.ErrorResponse": {
             "type": "object",
+            "required": [
+                "error"
+            ],
             "properties": {
                 "error": {
                     "type": "string"
@@ -820,6 +875,12 @@
         },
         "model.Artist": {
             "type": "object",
+            "required": [
+                "createdAt",
+                "id",
+                "titel",
+                "updatedAt"
+            ],
             "properties": {
                 "createdAt": {
                     "type": "string"
@@ -837,6 +898,12 @@
         },
         "model.Genre": {
             "type": "object",
+            "required": [
+                "createdAt",
+                "id",
+                "titel",
+                "updatedAt"
+            ],
             "properties": {
                 "createdAt": {
                     "type": "string"
@@ -854,6 +921,12 @@
         },
         "model.Meter": {
             "type": "object",
+            "required": [
+                "createdAt",
+                "id",
+                "titel",
+                "updatedAt"
+            ],
             "properties": {
                 "createdAt": {
                     "type": "string"
@@ -871,6 +944,13 @@
         },
         "model.Setlist": {
             "type": "object",
+            "required": [
+                "createdAt",
+                "id",
+                "items",
+                "titel",
+                "updatedAt"
+            ],
             "properties": {
                 "createdAt": {
                     "type": "string"
@@ -894,6 +974,12 @@
         },
         "model.SetlistPerformance": {
             "type": "object",
+            "required": [
+                "performance",
+                "performanceID",
+                "position",
+                "setlistID"
+            ],
             "properties": {
                 "createdAt": {
                     "type": "string"
@@ -914,6 +1000,10 @@
         },
         "service.ChangeOrderItem": {
             "type": "object",
+            "required": [
+                "id",
+                "position"
+            ],
             "properties": {
                 "id": {
                     "type": "string"
@@ -925,6 +1015,9 @@
         },
         "service.ChangeOrderPayload": {
             "type": "object",
+            "required": [
+                "items"
+            ],
             "properties": {
                 "items": {
                     "type": "array",
@@ -936,6 +1029,11 @@
         },
         "service.SelistWithoutPerformance": {
             "type": "object",
+            "required": [
+                "createdAt",
+                "id",
+                "updatedAt"
+            ],
             "properties": {
                 "createdAt": {
                     "type": "string"

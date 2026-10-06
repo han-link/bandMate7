@@ -2,15 +2,21 @@ definitions:
   Performance:
     properties:
       artist:
-        $ref: '#/definitions/model.Artist'
+        allOf:
+        - $ref: '#/definitions/model.Artist'
+        x-nullable: true
       bpm:
         type: integer
+        x-nullable: true
       cover:
-        $ref: '#/definitions/Resource'
+        allOf:
+        - $ref: '#/definitions/Resource'
+        x-nullable: true
       createdAt:
         type: string
       duration:
         type: integer
+        x-nullable: true
       genres:
         items:
           $ref: '#/definitions/model.Genre'
@@ -18,7 +24,9 @@ definitions:
       id:
         type: string
       meter:
-        $ref: '#/definitions/model.Meter'
+        allOf:
+        - $ref: '#/definitions/model.Meter'
+        x-nullable: true
       released:
         type: integer
       resources:
@@ -29,6 +37,19 @@ definitions:
         type: string
       updatedAt:
         type: string
+    required:
+    - artist
+    - bpm
+    - cover
+    - createdAt
+    - duration
+    - genres
+    - id
+    - meter
+    - released
+    - resources
+    - titel
+    - updatedAt
     type: object
   Resource:
     properties:
@@ -45,7 +66,17 @@ definitions:
       url:
         type: string
       user_role:
-        $ref: '#/definitions/UserRole'
+        allOf:
+        - $ref: '#/definitions/UserRole'
+        x-nullable: true
+    required:
+    - createdAt
+    - filename
+    - id
+    - type
+    - updatedAt
+    - url
+    - user_role
     type: object
   UserRole:
     properties:
@@ -57,6 +88,11 @@ definitions:
         type: string
       updatedAt:
         type: string
+    required:
+    - createdAt
+    - id
+    - titel
+    - updatedAt
     type: object
   main.CreateArtistPayload:
     properties:
@@ -74,12 +110,15 @@ definitions:
       title:
         type: string
     required:
+    - performanceIds
     - title
     type: object
   main.ErrorResponse:
     properties:
       error:
         type: string
+    required:
+    - error
     type: object
   model.Artist:
     properties:
@@ -91,6 +130,11 @@ definitions:
         type: string
       updatedAt:
         type: string
+    required:
+    - createdAt
+    - id
+    - titel
+    - updatedAt
     type: object
   model.Genre:
     properties:
@@ -102,6 +146,11 @@ definitions:
         type: string
       updatedAt:
         type: string
+    required:
+    - createdAt
+    - id
+    - titel
+    - updatedAt
     type: object
   model.Meter:
     properties:
@@ -113,6 +162,11 @@ definitions:
         type: string
       updatedAt:
         type: string
+    required:
+    - createdAt
+    - id
+    - titel
+    - updatedAt
     type: object
   model.Setlist:
     properties:
@@ -128,6 +182,12 @@ definitions:
         type: string
       updatedAt:
         type: string
+    required:
+    - createdAt
+    - id
+    - items
+    - titel
+    - updatedAt
     type: object
   model.SetlistPerformance:
     properties:
@@ -141,6 +201,11 @@ definitions:
         type: integer
       setlistID:
         type: string
+    required:
+    - performance
+    - performanceID
+    - position
+    - setlistID
     type: object
   service.ChangeOrderItem:
     properties:
@@ -148,6 +213,9 @@ definitions:
         type: string
       position:
         type: integer
+    required:
+    - id
+    - position
     type: object
   service.ChangeOrderPayload:
     properties:
@@ -155,6 +223,8 @@ definitions:
         items:
           $ref: '#/definitions/service.ChangeOrderItem'
         type: array
+    required:
+    - items
     type: object
   service.SelistWithoutPerformance:
     properties:
@@ -166,6 +236,10 @@ definitions:
         type: string
       updatedAt:
         type: string
+    required:
+    - createdAt
+    - id
+    - updatedAt
     type: object
 info:
   contact: {}
